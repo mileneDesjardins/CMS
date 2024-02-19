@@ -3,7 +3,7 @@ CREATE TABLE UTILISATEUR (
     nom TEXT CHECK(length(nom) <= 30), --ON DOIT FAIRE UNE VALIDATION SI NBRE DE CHAR MAX DANS LE CODE
     prenom TEXT CHECK(length(nom) <= 30),
     courriel TEXT,
-    mot_de_passe_hash TEXT NON NULL,
+    mot_de_passe_hash TEXT NOT NULL,
     mot_de_passe_salt TEXT NOT NULL,
     id_photo INTEGER NOT NULL,
     CONSTRAINT fk_photo
