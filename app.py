@@ -24,52 +24,49 @@ def accueil():  # put application's code here
     else:
         return render_template("index.html", titre=titre)
 
+
 @app.route('/inscription', methods=['GET', 'POST'])
 def inscription():
     titre = 'Inscription'
     if request.method == "GET":
         return render_template("incription.html")
     else:
-        username = request.form["username"]
-        password = request.form["password"]
-        email = request.form["email"]
+        prenom = request.form['prenom']
+        nom = request.form['nom']
+        courriel = request.form["courriel"]
+        mdp = request.form["mdp"]
 
         # Vérifier que les champs ne sont pas vides
-        if username == "" or password == "" or email == "":
-            return render_template("inscription.html", titre=titre, error="Tous les champs sont obligatoires.")
+        if prenom == "" or nom == "" or courriel == "" or mdp == "":
+            return render_template("inscription.html", titre=titre, erreur="Tous les champs sont obligatoires.")
 
         # Validation du formulaire - Vous pouvez implémenter votre propre logique de validation ici
 
         # Génération d'un sel et hachage du mot de passe
         salt = uuid.uuid4().hex
-        hashed_password = hashlib.sha512(str(password + salt).encode("utf-8")).hexdigest()
-
+        hashed_password = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
 
         # Stockage des informations de l'utilisateur (à adapter selon votre base de données)
-        # Exemple : sauvegarde dans une base de données
-        # db.create_user(username, email, salt, hashed_password)
         db = get_db()
-        db.create_user(username, email, salt, hashed_password)
+        db.creer_utilisateur(prenom, nom, courriel, salt, hashed_password)
 
         # Redirection vers une page de confirmation
         return redirect(url_for('confirmation'), 302)
 
 
+@app.route('/connexion', methods=['GET', 'POST'])
+def connexion():
+    titre = "Connexion"
+    return render_template("connexion.html", titre=titre)
 
-
-@app.route('/connection', methods=['GET', 'POST'])
-def connection():
-    titre = "Connection"
-    return render_template("connection.html", titre=titre)
-
-
-@app.route('/deconnexion', methods=['GET', 'POST'])
 
 @app.route("/confirmation")
-def conirmation():
+def confirmation():
     title = "Pis moe - Vous etes inscrit"
     prenom = request.args.get('prenom')
-    return render_template('confirmation.html', title=title)
+    nom = request.args.get('nom')
+    return render_template('index.html', title=title, prenom=prenom, nom=nom)
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
@@ -82,6 +79,13 @@ def get_db():
     if database is None:
         g._database = Database()
     return g._database
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.disconnect()
 
 
 def deconnection():

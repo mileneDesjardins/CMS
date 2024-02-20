@@ -14,17 +14,20 @@
             <h1 class="h3 mb-1 fw-normal">Création d'un compte</h1>
             <h2 class="h5 mb-3 fw-normal">Veuillez remplir tous les champs</h2>
             <div class="container" style="max-width: 20%; text-align: center;">
-                <div class="row g-3">
+                <div class="row g-3 py-1">
                     <div class="col">
                         <input type="text" name="prenom" class="form-control" placeholder="Prénom" aria-label="Prénom">
                     </div>
+                </div>
+                <div class="row g-3 py-1">
                     <div class="col">
                         <input type="text" name="nom" class="form-control" placeholder="Nom" aria-label="Nom">
                     </div>
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="email" name="username" class="form-control" placeholder="Adresse courriel" aria-label="email">
+                        <input type="email" name="username" class="form-control" placeholder="Adresse courriel"
+                               aria-label="email">
                     </div>
                 </div>
                 <div class="row g-3 py-1">
@@ -32,6 +35,11 @@
                         <input type="text" name="mdp" class="form-control" placeholder="Mot de passe" aria-label="mdp">
                     </div>
                 </div>
+                {% if erreur %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ erreur }}
+                    </div>
+                {% endif %}
                 <button type="button" class="btn btn-primary my-4">Créer un compte</button>
             </div>
         </div>

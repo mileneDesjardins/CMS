@@ -1,20 +1,20 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="px-4 pt-5 my-5 text-center border-bottom">
+    <div class="px-4 pt-5 my-5 text-center">
         {% if prenom and nom %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue {{ prenom ~ ' ' ~ nom }}</h1>
         {% else %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue</h1>
         {% endif %}
         <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">Votre Contenu, Votre Style, Votre Voix : Tout est Possible</p>
+            <p class="lead mb-4">Votre Contenu, Votre Style, Votre Voix</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
                 <a href="{{ url_for('inscription') }}">
                     <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
                         S'inscrire
                     </button>
                 </a>
-                <a href="{{ url_for('connection') }}">
+                <a href="{{ url_for('connexion') }}">
                     <button type="button" class="btn btn-outline-secondary btn-lg px-4">Se connecter</button>
                 </a>
             </div>

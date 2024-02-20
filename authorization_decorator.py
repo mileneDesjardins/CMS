@@ -8,6 +8,6 @@ def login_required(f):
         if users:
             return f(*args, **kwargs)
         else:
-            return render_template("connection.html")
+            return render_template("connexion.html")
 
     return decorated_function
