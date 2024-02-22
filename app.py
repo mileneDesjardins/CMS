@@ -68,34 +68,37 @@ def inscription():
         return redirect(url_for('confirmation'), 302)
 
 
-@app.route('/connexion', methods=['POST'])
+@app.route('/connexion', methods=['GET', 'POST'])
 def connexion():
     titre = "Connexion"
-    courriel = request.form["courriel"]
-    mdp = request.form["mdp"]
 
-    if courriel == "" or mdp == "":
-        # TODO Faire la gestion de l'erreur
-        return redirect(url_for('connexion', erreur="Veuillez remplir tous les champs"), 302)
-
-    utilisateur = get_db().get_user_login_info(courriel)
-    if utilisateur is None:
-        # TODO Faire la gestion de l'erreur
-        return redirect(url_for("/connexion", titre=titre, erreur="Utilisateur inexistant, veuillez vérifier vos informations ou créer un nouveau compte."), 302)
-
-    salt = utilisateur[0]
-    mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
-    if mdp_hash == utilisateur[1]:
-        # ouvrir session
-        # Accès autorisé
-        id_session = uuid.uuid4().hex
-        get_db().save_session(id_session, courriel)
-        prenom = session.get("prenom")
-        nom = session.get("nom")
-        return redirect(url_for("/accueil", titre=titre, prenom=prenom, nom=nom), 302)
+    if request.method == "GET":
+        return render_template("connexion.html")
     else:
-        # TODO Faire la gestion de l'erreur
-        return redirect(url_for("/connexion", titre=titre, erreur="Connexion impossible, veuillez vérifier vos informations."), 302)
+        courriel = request.form["courriel"]
+        mdp = request.form["mdp"]
+
+        if courriel == "" or mdp == "":
+            # TODO Faire la gestion de l'erreur
+            return redirect(url_for('connexion', erreur="Veuillez remplir tous les champs"))
+
+        utilisateur = get_db().get_user_login_info(courriel)
+        if utilisateur is None:
+            # TODO Faire la gestion de l'erreur
+            return redirect(url_for('connexion', erreur="Utilisateur inexistant, veuillez vérifier vos informations ou créer un nouveau compte"))
+
+        salt = utilisateur[0]
+        mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+        if mdp_hash == utilisateur[1]:
+            # Accès autorisé
+            id_session = uuid.uuid4().hex
+            get_db().save_session(id_session, courriel)
+            prenom = session.get("prenom")
+            nom = session.get("nom")
+            return redirect(url_for('accueil', titre=titre, prenom=prenom, nom=nom))
+        else:
+            # TODO Faire la gestion de l'erreur
+            return redirect(url_for('connexion', erreur="Connexion impossible, veuillez vérifier vos informations"))
 
 def authentication_required(f):
     @wraps(f)
