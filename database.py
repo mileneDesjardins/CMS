@@ -1,6 +1,10 @@
 import sqlite3
 import uuid
 
+from flask import session
+
+import app
+
 
 class Database():
 
@@ -29,6 +33,22 @@ class Database():
         connection.execute(
             ("insert into utilisateur(prenom, nom, courriel, mot_de_passe_hash, mot_de_passe_salt, id_photo)"
              " values(?, ?, ?, ?, ?, ?)"), (prenom, nom, courriel, mot_de_passe_hash, mot_de_passe_salt, id_photo))
+        connection.commit()
+
+    def get_user_login_info(self, courriel):
+        cursor = self.get_connection().cursor()
+        cursor.execute(("select salt, hash from users where utilisateur=?"),
+                       (courriel,))
+        user = cursor.fetchone()
+        if user is None:
+            return None
+        else:
+            return user[0], user[1]
+
+    def save_session(self, id_session, courriel):
+        connection = self.get_connection()
+        connection.execute(("insert into sessions(id_session, utilisateur) "
+                            "values(?, ?)"), (id_session, courriel))
         connection.commit()
 
     def create_photo(self, file_data):

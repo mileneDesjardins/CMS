@@ -1,14 +1,25 @@
 import hashlib
-import sqlite3
 import uuid
+from functools import wraps
 
-from flask import Flask, render_template, request, redirect, g, session, url_for
+from flask import Flask, render_template, request, redirect, g, session, url_for, Response
 
 from authorization_decorator import login_required
 from database import Database
-import re
 
 app = Flask(__name__, static_url_path='', static_folder='static')
+
+def get_db():
+    database = getattr(g, '_database', None)
+    if database is None:
+        g._database = Database()
+    return g._database
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.disconnect()
 
 
 # regex = r"[^A-Za-z0-9_#$]"
@@ -57,40 +68,59 @@ def inscription():
         return redirect(url_for('confirmation'), 302)
 
 
-@app.route('/connexion', methods=['GET', 'POST'])
+@app.route('/connexion', methods=['POST'])
 def connexion():
     titre = "Connexion"
+    courriel = request.form["courriel"]
+    mdp = request.form["mdp"]
 
-    if request.method == 'POST':
-        courriel = request.form["courriel"]
-        mdp = request.form["mdp"]
+    if courriel == "" or mdp == "":
+        # TODO Faire la gestion de l'erreur
+        return redirect(url_for('connexion', erreur="Veuillez remplir tous les champs"), 302)
 
-        #SQLite
-        connection = sqlite3.connect('utilisateur.db')
-        cursor = connection.cursor()
-        cursor.execute(("select salt, hash from utilisateur where utilisateur=?"),
-                       (courriel,))
-        utilisateur = cursor.fetchone()
-        connection.close()
+    utilisateur = get_db().get_user_login_info(courriel)
+    if utilisateur is None:
+        # TODO Faire la gestion de l'erreur
+        return redirect(url_for("/connexion", titre=titre, erreur="Utilisateur inexistant, veuillez vérifier vos informations ou créer un nouveau compte."), 302)
 
-
-        courriel = request.form["courriel"]
-        mdp = request.form["mdp"]
-
-
-
-    if courriel is None:
-        print("Utilisateur inconnu")
+    salt = utilisateur[0]
+    mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+    if mdp_hash == utilisateur[1]:
+        # ouvrir session
+        # Accès autorisé
+        id_session = uuid.uuid4().hex
+        get_db().save_session(id_session, courriel)
+        prenom = session.get("prenom")
+        nom = session.get("nom")
+        return redirect(url_for("/accueil", titre=titre, prenom=prenom, nom=nom), 302)
     else:
-        salt = utilisateur[0]
-        hashed_password = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
-        if hashed_password == utilisateur[1]:
-            # ouvrir session
+        # TODO Faire la gestion de l'erreur
+        return redirect(url_for("/connexion", titre=titre, erreur="Connexion impossible, veuillez vérifier vos informations."), 302)
 
-            return render_template("index.html", titre=titre, prenom=prenom, nom=nom)
-        else:
-            return render_template("connexion.html", titre=titre, erreur="Les informations sont invalides")
+def authentication_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_authenticated(session):
+            return send_unauthorized()
+        return f(*args, **kwargs)
+    return decorated
 
+@app.route('/deconnexion')
+@authentication_required
+def logout():
+    id_session = session["id"]
+    session.pop('id', None)
+    get_db().delete_session(id_session)
+    return redirect("/")
+
+def is_authenticated(session):
+    # TODO Next-level : Vérifier la session dans la base de données
+    return "id" in session
+
+def send_unauthorized():
+    return Response('Could not verify your access level for that URL.\n'
+                    'You have to login with proper credentials.', 401,
+                    {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
 @app.route("/confirmation")
 def confirmation():
@@ -106,35 +136,7 @@ def admin():
     Titre = "Admin"
 
 
-def get_db():
-    database = getattr(g, '_database', None)
-    if database is None:
-        g._database = Database()
-    return g._database
 
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.disconnect()
-
-
-def courriel_existe(courriel):
-    return get_db().courriel_existe(courriel)
-
-
-def valider_courriel(courriel, validation_courriel):
-    return courriel == validation_courriel
-
-
-# def valider_mdp(str):
-#     try:
-#         if mdp_existant(str) is not None:
-#             return True
-#     except:
-#         pass
-#     return False
 
 
 if __name__ == '__main__':
