@@ -1,13 +1,18 @@
 import hashlib
 import uuid
 from functools import wraps
+import os
+from dotenv import load_dotenv
 
 from flask import Flask, render_template, request, redirect, g, session, url_for, Response
 
 from authorization_decorator import login_required
 from database import Database
 
+load_dotenv()
 app = Flask(__name__, static_url_path='', static_folder='static')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
 
 def get_db():
     database = getattr(g, '_database', None)
@@ -29,8 +34,8 @@ def close_connection(exception):
 def accueil():  # put application's code here
     titre = 'Accueil'
     if "id" in session:
-        prenom = get_db().get_session(session["prenom"])
-        nom = get_db().get_session(session["nom"])
+        prenom = session["prenom"]
+        nom = session["nom"]
         return render_template('index.html', titre=titre, prenom=prenom, nom=nom)
     else:
         return render_template("index.html", titre=titre)
@@ -65,7 +70,7 @@ def inscription():
         db.create_user(prenom, nom, courriel, mot_de_passe_salt, mot_de_passe_hash, id_photo)
 
         # Redirection vers une page de confirmation
-        return redirect(url_for('confirmation'), 302)
+        return redirect('/confirmation', 302)
 
 
 @app.route('/connexion', methods=['GET', 'POST'])
@@ -80,12 +85,12 @@ def connexion():
 
         if courriel == "" or mdp == "":
             # TODO Faire la gestion de l'erreur
-            return redirect(url_for('connexion', erreur="Veuillez remplir tous les champs"))
+            return render_template('connexion.html', erreur="Veuillez remplir tous les champs")
 
         utilisateur = get_db().get_user_login_info(courriel)
         if utilisateur is None:
             # TODO Faire la gestion de l'erreur
-            return redirect(url_for('connexion', erreur="Utilisateur inexistant, veuillez vérifier vos informations ou créer un nouveau compte"))
+            return render_template('connexion.html', erreur="Utilisateur inexistant, veuillez vérifier vos informations ou créer un nouveau compte")
 
         salt = utilisateur[0]
         mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
@@ -93,12 +98,15 @@ def connexion():
             # Accès autorisé
             id_session = uuid.uuid4().hex
             get_db().save_session(id_session, courriel)
-            prenom = session.get("prenom")
-            nom = session.get("nom")
-            return redirect(url_for('accueil', titre=titre, prenom=prenom, nom=nom))
+
+            session["id"] = id_session
+
+            session["prenom"] = utilisateur[2]
+            session["nom"] = utilisateur[3]
+            return redirect("/"), 302
         else:
             # TODO Faire la gestion de l'erreur
-            return redirect(url_for('connexion', erreur="Connexion impossible, veuillez vérifier vos informations"))
+            return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
 def authentication_required(f):
     @wraps(f)
@@ -125,22 +133,14 @@ def send_unauthorized():
                     'You have to login with proper credentials.', 401,
                     {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
-@app.route("/confirmation")
-def confirmation():
-    title = "Pis moe - Vous etes inscrit"
-    prenom = request.args.get('prenom')
-    nom = request.args.get('nom')
-    return render_template('index.html', title=title, prenom=prenom, nom=nom)
-
-
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
     Titre = "Admin"
 
-
-
-
+@app.route('/confirmation', methods=['GET'])
+def confirmation():
+    return render_template('confirmation.html')
 
 if __name__ == '__main__':
     app.run()
