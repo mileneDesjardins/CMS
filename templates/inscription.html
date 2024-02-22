@@ -9,7 +9,7 @@
                   transform="translate(-46 -28)"/>
         </svg>
     </div>
-    <form>
+    <form method="POST" enctype="multipart/form-data">
         <div class="container" style="max-width: 100%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Création d'un compte</h1>
             <h2 class="h5 mb-3 fw-normal">Veuillez remplir tous les champs</h2>
@@ -26,13 +26,18 @@
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="email" name="username" class="form-control" placeholder="Adresse courriel"
+                        <input type="email" name="courriel" class="form-control" placeholder="Adresse courriel"
                                aria-label="email">
                     </div>
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="text" name="mdp" class="form-control" placeholder="Mot de passe" aria-label="mdp">
+                        <input type="password" name="mdp" class="form-control" placeholder="Mot de passe" aria-label="mdp">
+                    </div>
+                </div>
+                <div class="row g-3 py-1">
+                    <div class="col">
+                        <input type="file" name="photo" class="form-control" aria-label="photo">
                     </div>
                 </div>
                 {% if erreur %}
@@ -40,7 +45,7 @@
                         {{ erreur }}
                     </div>
                 {% endif %}
-                <button type="button" class="btn btn-primary my-4">Créer un compte</button>
+                <button type="submit" class="btn btn-primary my-4">Créer un compte</button>
             </div>
         </div>
     </form>

@@ -17,9 +17,9 @@ app = Flask(__name__, static_url_path='', static_folder='static')
 @app.route('/')
 def accueil():  # put application's code here
     titre = 'Accueil'
-    prenom = session.get('prenom')
-    nom = session.get('nom')
-    if prenom and nom:
+    if "id" in session:
+        prenom = get_db().get_session(session["prenom"])
+        nom = get_db().get_session(session["nom"])
         return render_template('index.html', titre=titre, prenom=prenom, nom=nom)
     else:
         return render_template("index.html", titre=titre)
@@ -29,26 +29,29 @@ def accueil():  # put application's code here
 def inscription():
     titre = 'Inscription'
     if request.method == "GET":
-        return render_template("incription.html")
+        return render_template("inscription.html")
     else:
         prenom = request.form['prenom']
         nom = request.form['nom']
         courriel = request.form["courriel"]
         mdp = request.form["mdp"]
+        photo = request.files["photo"]
+        photo_data = photo.stream.read()
 
         # Vérifier que les champs ne sont pas vides
-        if prenom == "" or nom == "" or courriel == "" or mdp == "":
+        if prenom == "" or nom == "" or courriel == "" or mdp == "" or len(photo_data) == 0:
             return render_template("inscription.html", titre=titre, erreur="Tous les champs sont obligatoires.")
 
         # Validation du formulaire - Vous pouvez implémenter votre propre logique de validation ici
 
         # Génération d'un sel et hachage du mot de passe
-        salt = uuid.uuid4().hex
-        hashed_password = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+        mot_de_passe_salt = uuid.uuid4().hex
+        mot_de_passe_hash = hashlib.sha512(str(mdp + mot_de_passe_salt).encode("utf-8")).hexdigest()
 
         # Stockage des informations de l'utilisateur (à adapter selon votre base de données)
         db = get_db()
-        db.creer_utilisateur(prenom, nom, courriel, salt, hashed_password)
+        id_photo = db.create_photo(photo_data)
+        db.create_user(prenom, nom, courriel, mot_de_passe_salt, mot_de_passe_hash, id_photo)
 
         # Redirection vers une page de confirmation
         return redirect(url_for('confirmation'), 302)
@@ -57,7 +60,36 @@ def inscription():
 @app.route('/connexion', methods=['GET', 'POST'])
 def connexion():
     titre = "Connexion"
-    return render_template("connexion.html", titre=titre)
+
+    if request.method == 'POST':
+        courriel = request.form["courriel"]
+        mdp = request.form["mdp"]
+
+        #SQLite
+        connection = sqlite3.connect('utilisateur.db')
+        cursor = connection.cursor()
+        cursor.execute(("select salt, hash from utilisateur where utilisateur=?"),
+                       (courriel,))
+        utilisateur = cursor.fetchone()
+        connection.close()
+
+
+        courriel = request.form["courriel"]
+        mdp = request.form["mdp"]
+
+
+
+    if courriel is None:
+        print("Utilisateur inconnu")
+    else:
+        salt = utilisateur[0]
+        hashed_password = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+        if hashed_password == utilisateur[1]:
+            # ouvrir session
+
+            return render_template("index.html", titre=titre, prenom=prenom, nom=nom)
+        else:
+            return render_template("connexion.html", titre=titre, erreur="Les informations sont invalides")
 
 
 @app.route("/confirmation")
@@ -86,12 +118,6 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.disconnect()
-
-
-def deconnection():
-    database = getattr(g, '_database', None)
-    if database is not None:
-        database.deconnection()
 
 
 def courriel_existe(courriel):
