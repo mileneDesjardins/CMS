@@ -1,4 +1,4 @@
-CREATE TABLE ARTICLE (
+CREATE TABLE ARTICLES (
     id_article INTEGER PRIMARY KEY,
     titre varchar(25) NOT NULL,
     date_publication DATE NOT NULL,

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="px-4 pt-5 my-5 text-center">
-        {% if prenom and nom %}
+        {% if prenom is defined and nom is defined %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue {{ prenom ~ ' ' ~ nom }}</h1>
         {% else %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue</h1>
