@@ -12,7 +12,9 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('accueil') }}">Accueil</a>
         <form class="d-flex mx-2" method="POST" role="search" >
-            <input class="form-control me-2" name="recherche_input" placeholder="Entrez un mot clé" type="search">
+            <label>
+                <input class="form-control me-2" name="recherche_input" placeholder="Entrez un mot clé" type="search">
+            </label>
             <button class="btn btn-outline-success" type="submit">Soumettre</button>
         </form>
     </div>
