@@ -8,6 +8,18 @@ class Database():
         self.user_connection = None
         self.photo_connection = None
         self.session_connection = None
+        self.article_connection = None
+
+    def get_article_connection(self):
+        if self.user_connection is None:
+            self.user_connection = sqlite3.connect('db/articles.db')
+        return self.user_connection
+
+    def get_articles(self, recherche_input=None):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute("SELECT * FROM articles WHERE titre LIKE ? OR contenu LIKE ?",
+                       ('%' + recherche_input + '%', '%' + recherche_input + '%'))
+        return cursor.fetchall()
 
     def get_user_connection(self):
         if self.user_connection is None:
@@ -31,6 +43,8 @@ class Database():
             self.photo_connection.close()
         if self.session_connection is not None:
             self.session_connection.close()
+        if self.article_connection is not None:
+            self.article_connection.close()
 
     def create_user(self, prenom, nom, courriel, mdp_hash, mdp_salt, id_photo):
         connection = self.get_user_connection()
@@ -48,7 +62,6 @@ class Database():
         return id_photo
 
     def get_photo(self, id_photo):
-        cursor
         pass
 
     def save_session(self, id_session, id_utilisateur):

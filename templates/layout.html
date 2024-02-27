@@ -11,12 +11,10 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('accueil') }}">Accueil</a>
-
-        <form class="d-flex mx-2" role="search">
-            <input class="form-control me-2" type="search" placeholder="Entrez un mot clé" aria-label="Search">
+        <form class="d-flex mx-2" method="POST" role="search" >
+            <input class="form-control me-2" name="recherche_input" placeholder="Entrez un mot clé" type="search">
             <button class="btn btn-outline-success" type="submit">Soumettre</button>
         </form>
-    </div>
     </div>
 </nav>
 

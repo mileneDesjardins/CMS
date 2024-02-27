@@ -1,10 +1,11 @@
 import hashlib
+import sqlite3
 import uuid
 from functools import wraps
 import os
 from dotenv import load_dotenv
 
-from flask import Flask, render_template, request, redirect, g, session, Response
+from flask import Flask, render_template, request, redirect, g, session, Response, url_for
 
 from authorization_decorator import login_required
 from database import Database
@@ -31,7 +32,7 @@ def close_connection(exception):
 # regex = r"[^A-Za-z0-9_#$]"
 # mdp_existant = re.compile(regex).match(request)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def accueil():  # put application's code here
     titre = 'Accueil'
     if "id" in session:
@@ -41,6 +42,25 @@ def accueil():  # put application's code here
         return render_template('index.html', titre=titre, prenom=session["prenom"], nom=session["nom"])
     else:
         return render_template("index.html", titre=titre)
+
+@app.route('/recherche', methods=['GET', 'POST'])
+def recherche():
+    if request.method == 'POST':
+        recherche_input = request.form["recherche_input"]
+        if not recherche_input:
+            return redirect('/'), 302
+        else:
+            db = get_db()
+            articles = db.get_articles(recherche_input)
+            return redirect(url_for('/resultats', query=recherche_input, articles=articles)), 302
+    elif request.method == 'GET':
+        return render_template("index.html")
+
+@app.route('/resultats/<query>', methods=['GET', 'POST'])
+def resultats(query):
+    articles = request.args.get('articles', [])
+    return render_template('resultats.html', query=query, articles=articles)
+
 
 
 @app.route('/inscription', methods=['GET', 'POST'])
