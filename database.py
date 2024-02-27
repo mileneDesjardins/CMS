@@ -10,6 +10,46 @@ class Database():
         self.session_connection = None
         self.article_connection = None
 
+    def disconnect(self):
+        if self.user_connection is not None:
+            self.user_connection.close()
+        if self.photo_connection is not None:
+            self.photo_connection.close()
+        if self.session_connection is not None:
+            self.session_connection.close()
+        if self.article_connection is not None:
+            self.article_connection.close()
+
+    ### UTILISATEURS
+    def get_user_connection(self):
+        if self.user_connection is None:
+            self.user_connection = sqlite3.connect('db/utilisateurs.db')
+        return self.user_connection
+
+    def create_user(self, prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo):
+        connection = self.get_user_connection()
+        connection.execute(
+            ("insert into utilisateurs(prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo)"
+             " values(?, ?, ?, ?, ?, ?, ?)"), (prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo))
+        connection.commit()
+
+    def get_user_login_info(self, username):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute((
+            "select prenom, nom, mdp_hash, mdp_salt, id_photo from utilisateurs where username=? values(?, ?, ?, ?, ?)"),
+            (username,))
+        return cursor.fetchone()
+
+    def user_exists(self, username):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute("SELECT * FROM utilisateurs WHERE username LIKE ?", ('%' + username + '%',))
+        utilisateur_existe = cursor.fetchall()
+        if len(utilisateur_existe) == 0:
+            return False
+        else:
+            return True
+
+    ### ARTICLES
     def get_article_connection(self):
         if self.user_connection is None:
             self.user_connection = sqlite3.connect('db/articles.db')
@@ -21,37 +61,11 @@ class Database():
                        ('%' + recherche_input + '%', '%' + recherche_input + '%'))
         return cursor.fetchall()
 
-    def get_user_connection(self):
-        if self.user_connection is None:
-            self.user_connection = sqlite3.connect('db/utilisateurs.db')
-        return self.user_connection
-
+    ### PHOTOS
     def get_photo_connection(self):
         if self.photo_connection is None:
             self.photo_connection = sqlite3.connect('db/photos.db')
         return self.photo_connection
-
-    def get_session_connection(self):
-        if self.session_connection is None:
-            self.session_connection = sqlite3.connect('db/sessions.db')
-        return self.session_connection
-
-    def disconnect(self):
-        if self.user_connection is not None:
-            self.user_connection.close()
-        if self.photo_connection is not None:
-            self.photo_connection.close()
-        if self.session_connection is not None:
-            self.session_connection.close()
-        if self.article_connection is not None:
-            self.article_connection.close()
-
-    def create_user(self, prenom, nom, courriel, mdp_hash, mdp_salt, id_photo):
-        connection = self.get_user_connection()
-        connection.execute(
-            ("insert into utilisateurs(prenom, nom, courriel, mdp_hash, mdp_salt, id_photo)"
-             " values(?, ?, ?, ?, ?, ?)"), (prenom, nom, courriel, mdp_hash, mdp_salt, id_photo))
-        connection.commit()
 
     def create_photo(self, file_data):
         id_photo = str(uuid.uuid4())
@@ -64,6 +78,22 @@ class Database():
     def get_photo(self, id_photo):
         pass
 
+    ### SESSIONS
+    def get_session_connection(self):
+        if self.session_connection is None:
+            self.session_connection = sqlite3.connect('db/sessions.db')
+        return self.session_connection
+
+    def get_session(self, id_session):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute(("select username from sessions where id_session=?"),
+                       (id_session,))
+        data = cursor.fetchone()
+        if data is None:
+            return None
+        else:
+            return data[0]
+
     def save_session(self, id_session, id_utilisateur):
         connection = self.get_session_connection()
         connection.execute(("insert into sessions(id_session, id_utilisateur)"
@@ -71,33 +101,12 @@ class Database():
         connection.commit()
         return id_session
 
-    def get_user_login_info(self, courriel):
-        cursor = self.get_user_connection().cursor()
-        cursor.execute(("select prenom, nom, mdp_hash, mdp_salt, id_photo from utilisateurs where courriel=?"),
-                       (courriel,))
-        return cursor.fetchone()
-
-    def courriel_existe(self, courriel):
-        cursor = self.get_user_connection().cursor()
-        cursor.execute("SELECT * FROM utilisateur WHERE courriel LIKE ?", ('%' + courriel + '%',))
-        utilisateur_existe = cursor.fetchall()
-        if len(utilisateur_existe) == 0:
-            return False
-        else:
-            return True
-
     def delete_session(self, id_session):
         connection = self.get_user_connection()
         connection.execute(("delete from sessions where id_session=?"),
                            (id_session,))
         connection.commit()
 
-    def get_session(self, id_session):
-        cursor = self.get_user_connection().cursor()
-        cursor.execute(("select courriel from sessions where id_session=?"),
-                       (id_session,))
-        data = cursor.fetchone()
-        if data is None:
-            return None
-        else:
-            return data[0]
+
+
+
