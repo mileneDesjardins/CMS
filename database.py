@@ -36,7 +36,7 @@ class Database():
     def get_user_login_info(self, username):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
-            "select prenom, nom, mdp_hash, mdp_salt, id_photo from utilisateurs where username=? values(?, ?, ?, ?, ?)"),
+            "select prenom, nom, mdp_hash, mdp_salt, id_photo from utilisateurs where username=?"),
             (username,))
         return cursor.fetchone()
 
@@ -67,16 +67,23 @@ class Database():
             self.photo_connection = sqlite3.connect('db/photos.db')
         return self.photo_connection
 
-    def create_photo(self, file_data):
+    def create_photo(self, photo_data):
         id_photo = str(uuid.uuid4())
         connection = self.get_photo_connection()
         connection.execute("insert into photos(id_photo, data) values(?, ?)",
-                           [id_photo, sqlite3.Binary(file_data)])
+                           [id_photo, sqlite3.Binary(photo_data)])
         connection.commit()
         return id_photo
 
     def get_photo(self, id_photo):
-        pass
+        cursor = self.get_photo_connection().cursor()
+        cursor.execute("SELECT data FROM photos WHERE id_photo=?", (id_photo,))
+        photo_data = cursor.fetchone()
+        if photo_data:
+            return photo_data[0]
+        else:
+            return None
+
 
     ### SESSIONS
     def get_session_connection(self):
@@ -85,8 +92,8 @@ class Database():
         return self.session_connection
 
     def get_session(self, id_session):
-        cursor = self.get_user_connection().cursor()
-        cursor.execute(("select username from sessions where id_session=?"),
+        cursor = self.get_session_connection().cursor()
+        cursor.execute(("select utilisateur from sessions where id_session=?"),
                        (id_session,))
         data = cursor.fetchone()
         if data is None:
@@ -94,10 +101,10 @@ class Database():
         else:
             return data[0]
 
-    def save_session(self, id_session, id_utilisateur):
+    def save_session(self, id_session, username):
         connection = self.get_session_connection()
-        connection.execute(("insert into sessions(id_session, id_utilisateur)"
-                            "values(?, ?)"), (id_session, id_utilisateur))
+        connection.execute(("insert into sessions(id_session, utilisateur)"
+                            "values(?, ?)"), (id_session, username))
         connection.commit()
         return id_session
 

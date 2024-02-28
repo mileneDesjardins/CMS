@@ -32,16 +32,15 @@ def close_connection(exception):
 # regex = r"[^A-Za-z0-9_#$]"
 # mdp_existant = re.compile(regex).match(request)
 
-@app.route('/', methods=['GET', 'POST'])
-def accueil():  # put application's code here
+@app.route('/', methods=['GET'])
+def accueil():
     titre = 'Accueil'
+    prenom = session.get('prenom')
+    nom = session.get('nom')
+    photo = None
     if "id" in session:
-        # prenom = get_db().get_session(session["prenom"])
-        # nom = get_db().get_session(session["nom"])
         photo = get_db().get_photo(session["id_photo"])
-        return render_template('index.html', titre=titre, prenom=session["prenom"], nom=session["nom"])
-    else:
-        return render_template("index.html", titre=titre)
+    return render_template('index.html', titre=titre, prenom=prenom, nom=nom, photo=photo)
 
 @app.route('/recherche', methods=['GET', 'POST'])
 def recherche():
@@ -63,14 +62,15 @@ def resultats(query):
 
 
 
-@app.route('/inscription', methods=['GET', 'POST'])
+@app.route('/creation_utilisateur', methods=['GET', 'POST'])
 def inscription():
     titre = 'Inscription'
     if request.method == "GET":
-        return render_template("inscription.html")
+        return render_template("creation_utilisateur.html")
     else:
         prenom = request.form['prenom']
         nom = request.form['nom']
+        username = request.form["username"]
         courriel = request.form["courriel"]
         mdp = request.form["mdp"]
         photo = request.files["photo"]
@@ -78,7 +78,7 @@ def inscription():
 
         # Vérifier que les champs ne sont pas vides
         if prenom == "" or nom == "" or courriel == "" or mdp == "" or len(photo_data) == 0:
-            return render_template("inscription.html", titre=titre, erreur="Tous les champs sont obligatoires.")
+            return render_template("creation_utilisateur.html", titre=titre, erreur="Tous les champs sont obligatoires.")
 
         # Validation du formulaire - Vous pouvez implémenter votre propre logique de validation ici
 
@@ -89,44 +89,42 @@ def inscription():
         # Stockage des informations de l'utilisateur (à adapter selon votre base de données)
         db = get_db()
         id_photo = db.create_photo(photo_data)
-        db.create_user(prenom, nom, courriel, mdp_hash, mdp_salt, id_photo)
+
+        db.create_user(prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo)
 
         # Redirection vers une page de confirmation
         return redirect('/confirmation', 302)
 
 
-@app.route('/connexion', methods=['GET', 'POST'])
+@app.route('/connexion', methods=['POST'])
 def connexion():
     titre = "Connexion"
+    username = request.form["username"]
+    mdp = request.form["mdp"]
 
-    if request.method == "GET":
-        return render_template("connexion.html")
+    if username == "" or mdp == "":
+        return render_template('index.html', erreur="Veuillez remplir tous les champs")
+
+    utilisateur = get_db().get_user_login_info(username)
+    if utilisateur is None:
+        return render_template('index.html',
+                               erreur="Utilisateur inexistant, veuillez vérifier vos informations")
+
+    salt = utilisateur[3]
+    mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+    if mdp_hash == utilisateur[2]:
+        # Accès autorisé
+        id_session = uuid.uuid4().hex
+        get_db().save_session(id_session, username)
+
+        session["id"] = id_session
+        session["prenom"] = utilisateur[0]
+        session["nom"] = utilisateur[1]
+        session["id_photo"] = utilisateur[4]
+        print("Session après connexion : ", session)
+        return redirect("/", 302)
     else:
-        courriel = request.form["courriel"]
-        mdp = request.form["mdp"]
-
-        if courriel == "" or mdp == "":
-            # TODO Faire la gestion de l'erreur
-            return render_template('connexion.html', erreur="Veuillez remplir tous les champs")
-        utilisateur = get_db().get_user_login_info(courriel)
-        if utilisateur is None:
-            # TODO Faire la gestion de l'erreur
-            return render_template('connexion.html',
-                                   erreur="Utilisateur inexistant, veuillez vérifier vos informations ou créer un nouveau compte")
-        salt = utilisateur[3]
-        mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
-        if mdp_hash == utilisateur[2]:
-            # Accès autorisé
-            id_session = uuid.uuid4().hex
-            # get_db().save_session(id_session, courriel)
-            session["id"] = id_session
-            session["prenom"] = utilisateur[0]
-            session["nom"] = utilisateur[1]
-            session["id_photo"] = utilisateur[4]
-            return redirect("/", 302)
-        else:
-            # TODO Faire la gestion de l'erreur
-            return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
+        return render_template('index.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
 
 def authentication_required(f):
