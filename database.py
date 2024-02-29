@@ -56,10 +56,19 @@ class Database():
         return self.user_connection
 
     def get_articles(self, recherche_input=None):
-        cursor = self.get_user_connection().cursor()
-        cursor.execute("SELECT * FROM articles WHERE titre LIKE ? OR contenu LIKE ?",
-                       ('%' + recherche_input + '%', '%' + recherche_input + '%'))
+        cursor = self.get_article_connection().cursor()
+        if recherche_input:
+            cursor.execute("SELECT * FROM articles WHERE titre LIKE ? OR contenu LIKE ?",
+                           ('%' + recherche_input + '%', '%' + recherche_input + '%'))
+        else:
+            cursor.execute("SELECT titre_article, date_publication, contenu FROM articles")
         return cursor.fetchall()
+
+    def get_article_by_id(self, id_article):
+        cursor = self.get_article_connection().cursor()
+        cursor.execute("SELECT titre_article, date_publication, contenu FROM articles WHERE id_article = ?",
+                       (id_article,))
+        return cursor.fetchone()
 
     def create_article(self, titre_article, date_publication, contenu, id_utilisateur):
         connection = self.get_article_connection()

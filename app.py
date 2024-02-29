@@ -156,11 +156,23 @@ def deconnexion():
     return redirect("/")
 
 
-@app.route('/articles', methods=['GET', 'POST'])
+@app.route('/articles', methods=['GET'])
 @login_required
 def articles():
     titre = "Articles"
-    return render_template('articles.html', titre=titre)
+    # Récupérer tous les articles depuis la base de données
+    db = get_db()
+    articles = db.get_articles()  # Utilisez la fonction pour récupérer tous les articles
+    return render_template('articles.html', titre=titre, articles=articles)
+
+@app.route('/article/<identifiant>', methods=['GET'])
+def article(identifiant):
+    titre = "Article"
+    # Récupérer l'article spécifique depuis la base de données en utilisant son identifiant
+    db = get_db()
+    article = db.get_article_by_id(identifiant)  # Utilisez la fonction pour récupérer un article par son ID
+    return render_template('article.html', titre=titre, article=article)
+
 
 
 @app.route('/admin-nouveau', methods=['GET', 'POST'])
