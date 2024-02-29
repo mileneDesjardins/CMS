@@ -1,5 +1,4 @@
 import hashlib
-import sqlite3
 import uuid
 from functools import wraps
 import os
@@ -45,6 +44,7 @@ def accueil():
         photo = None
     return render_template('index.html', titre=titre, prenom=prenom, nom=nom, photo=photo)
 
+
 @app.route('/recherche', methods=['GET', 'POST'])
 def recherche():
     if request.method == 'POST':
@@ -58,11 +58,11 @@ def recherche():
     elif request.method == 'GET':
         return render_template("index.html")
 
+
 @app.route('/resultats/<query>', methods=['GET', 'POST'])
 def resultats(query):
     articles = request.args.get('articles', [])
     return render_template('resultats.html', query=query, articles=articles)
-
 
 
 @app.route('/creation_utilisateur', methods=['GET', 'POST'])
@@ -81,7 +81,8 @@ def inscription():
 
         # Vérifier que les champs ne sont pas vides
         if prenom == "" or nom == "" or courriel == "" or mdp == "" or len(photo_data) == 0:
-            return render_template("creation_utilisateur.html", titre=titre, erreur="Tous les champs sont obligatoires.")
+            return render_template("creation_utilisateur.html", titre=titre,
+                                   erreur="Tous les champs sont obligatoires.")
 
         # Validation du formulaire - Vous pouvez implémenter votre propre logique de validation ici
 
@@ -99,69 +100,51 @@ def inscription():
         return redirect('/confirmation', 302)
 
 
-@app.route('/connexion', methods=['POST'])
+@app.route('/connexion', methods=['GET', 'POST'])
 def connexion():
     titre = "Connexion"
-    username = request.form["username"]
-    mdp = request.form["mdp"]
-
-    if username == "" or mdp == "":
-        return render_template('index.html', erreur="Veuillez remplir tous les champs")
-
-    utilisateur = get_db().get_user_login_info(username)
-    if utilisateur is None:
-        return render_template('index.html',
-                               erreur="Utilisateur inexistant, veuillez vérifier vos informations")
-
-    salt = utilisateur[3]
-    mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
-    if mdp_hash == utilisateur[2]:
-        # Accès autorisé
-        id_session = uuid.uuid4().hex
-        #get_db().save_session(id_session, username)
-
-        session["id"] = id_session
-        session["prenom"] = utilisateur[0]
-        session["nom"] = utilisateur[1]
-        session["id_photo"] = utilisateur[4]
-        return redirect("/", 302)
+    if request.method == "GET":
+        return render_template("connexion.html")
     else:
-        return render_template('index.html', erreur="Connexion impossible, veuillez vérifier vos informations")
+        username = request.form["username"]
+        mdp = request.form["mdp"]
 
+        if username == "" or mdp == "":
+            return render_template('connexion.html', erreur="Veuillez remplir tous les champs")
 
-def authentication_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not is_authenticated(session):
-            return send_unauthorized()
-        return f(*args, **kwargs)
+        utilisateur = get_db().get_user_login_info(username)
+        if utilisateur is None:
+            return render_template('connexion.html',
+                                   erreur="Utilisateur inexistant, veuillez vérifier vos informations")
 
-    return decorated
+        salt = utilisateur[3]
+        mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+        if mdp_hash == utilisateur[2]:
+            # Accès autorisé
+            id_session = uuid.uuid4().hex
+            # get_db().save_session(id_session, username)
+
+            session["id"] = id_session
+            session["prenom"] = utilisateur[0]
+            session["nom"] = utilisateur[1]
+            session["id_photo"] = utilisateur[4]
+            return redirect("/", 302)
+        else:
+            return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
 
 @app.route('/deconnexion')
-@authentication_required
-def logout():
+@login_required
+def deconnexion():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
-
-
-
-def is_authenticated(session):
-    # TODO Next-level : Vérifier la session dans la base de données
-    return "id" in session
-
-
-def send_unauthorized():
-    return Response('Could not verify your access level for that URL.\n'
-                    'You have to login with proper credentials.', 401,
-                    {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
 
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    Titre = "Admin"
+    titre = "Admin"
+    return render_template('index.html', titre=titre)
 
 
 @app.route('/confirmation', methods=['GET'])

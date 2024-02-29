@@ -8,28 +8,14 @@
             </a>
         {% else %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue</h1>
-            <form action="/connexion" method="POST">
-                <div class="container" style="max-width: 20%; text-align: center;">
-                    <h2 class="h5 mb-3 fw-normal">Veuillez vous connecter</h2>
-                    <div class="form-floating my-1">
-                        <input type="text" name="username" class="form-control" id="floatingInput"
-                               placeholder="Username">
-                        <label for="floatingInput">Username</label>
-                    </div>
-                    <div class="form-floating my-1">
-                        <input type="password" name="mdp" class="form-control" id="floatingPassword"
-                               placeholder="Mot de passe">
-                        <label for="floatingPassword">Mot de passe</label>
-                    </div>
-                    {% if erreur %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ erreur }}
-                        </div>
-                    {% endif %}
-                    <button name="submit" class="btn btn-primary w-100 py-2 my-3" type="submit">Se connecter</button>
-                    <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
-                </div>
-            </form>
+
+            <div class="container" style="max-width: 20%; text-align: center;">
+                <a href="{{ url_for('connexion') }}">
+                    <button name="submit" class="btn btn-primary w-100 py-2 my-3">Se connecter
+                    </button>
+                </a>
+            </div>
+
         {% endif %}
         <div class="col-lg-6 mx-auto">
             <p class="lead mb-4">Votre Contenu, Votre Style, Votre Voix</p>
@@ -38,9 +24,6 @@
                     <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
                         S'inscrire
                     </button>
-                </a>
-                <a href="{{ url_for('connexion') }}">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4">Se connecter</button>
                 </a>
             </div>
         </div>

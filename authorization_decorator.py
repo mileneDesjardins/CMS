@@ -1,13 +1,13 @@
 from flask import session, render_template
 from functools import wraps
 
+from functools import wraps
+from flask import session, render_template
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        users = dict(session).get('profile', None)
-        if users:
-            return f(*args, **kwargs)
-        else:
-            return render_template("connexion.html")
-
+        if 'id' not in session:
+            return render_template('index.html', message="Veuillez vous connecter pour accéder à cette page.")
+        return f(*args, **kwargs)
     return decorated_function
