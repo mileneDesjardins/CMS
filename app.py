@@ -170,48 +170,52 @@ def creation_article():
     # Formater la date au format DD-MM-YYYY
     format_date = date_publication.strftime("%d-%m-%Y")
 
-    titre_default = 'Création article'
-    erreur = None
-    titre = request.form.get('titre', titre_default)
-    date_publication = request.form.get('date_publication', format_date)
-    contenu = request.form.get('contenu')
-
     titre = 'Création article'
+    titre_article_default = "Titre"
+    erreur = None
+
     if request.method == "GET":
-        return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu)
+        titre_article = titre_article_default
+        return render_template("creation_article.html", titre=titre, titre_article=titre_article, date_publication=format_date,
+                               contenu="")
     else:
         # Récupérer les données du formulaire
-        titre = request.form.get('titre')
+        titre_article = request.form.get('titre_article')
         date_publication = request.form.get('date_publication')
         contenu = request.form.get('contenu')
 
         # Vérifier si l'un des champs est vide
-        if not titre or not date_publication or not contenu:
+        if not titre_article or not date_publication or not contenu:
             erreur = "Veuillez remplir tous les champs."
-            return render_template("creation_article.html",titre=titre, date_publication=date_publication, contenu=contenu, erreur=erreur)
+            return render_template("creation_article.html", titre=titre, titre_article=titre_article,
+                                   date_publication=date_publication, contenu=contenu, erreur=erreur)
 
         # Vérifier si le titre a au moins 3 caractères
-        if len(titre) < 3:
+        if len(titre_article) < 3:
             erreur = "Le titre doit avoir au moins 3 caractères."
-            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+            return render_template("creation_article.html", titre=titre, titre_article=titre_article,
+                                   date_publication=date_publication, contenu=contenu,
                                    erreur=erreur)
 
         # Vérifier si le champ titre dépasse 25 caractères
-        if len(titre) > 25:
+        if len(titre_article) > 25:
             erreur = "Le titre ne doit pas dépasser 25 caractères."
-            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+            return render_template("creation_article.html", titre=titre, titre_article=titre_article,
+                                   date_publication=date_publication, contenu=contenu,
                                    erreur=erreur)
 
         # Vérifier si le format de la date est valide
         if not re.match(r'^\d{2}-\d{2}-\d{4}$', date_publication):
             erreur = "Le format de la date de publication n'est pas valide. Utilisez le format DD-MM-YYYY."
-            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+            return render_template("creation_article.html", titre=titre, titre_article=titre_article,
+                                   date_publication=date_publication, contenu=contenu,
                                    erreur=erreur)
 
         # Vérifier si le contenu a au moins 15 caractères
         if len(contenu) < 15:
             erreur = "Le contenu doit avoir au moins 15 caractères."
-            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+            return render_template("creation_article.html", titre=titre, titre_article=titre_article,
+                                   date_publication=date_publication, contenu=contenu,
                                    erreur=erreur)
 
         # Insérer l'article dans la base de données
@@ -220,7 +224,8 @@ def creation_article():
         id_article = db.create_article(titre, date_publication, contenu, id_utilisateur)
 
         # Rediriger vers une page de confirmation avec l'ID de l'article créé
-        return redirect(url_for('confirmation', id_article=id_article, titre=titre, date_publication=date_publication, contenu=contenu))
+        return redirect(url_for('confirmation', titre=titre, id_article=id_article, titre_article=titre_article,
+                                date_publication=date_publication, contenu=contenu))
 
 
 @app.route('/utilisateurs', methods=['GET'])
