@@ -3,12 +3,13 @@
     <div class="px-4 pt-5 my-5 text-center">
         {% if prenom is not none and nom is not none %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue {{ prenom }} {{ nom }}</h1>
+            <p class="lead mb-4">Votre Contenu, Votre Style, Votre Voix</p>
             <a href="/deconnexion">
                 <button type="deconnexion" class="btn btn-outline-secondary btn-lg px-4">Se déconnecter</button>
             </a>
         {% else %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue</h1>
-
+            <p class="lead mb-4">Votre Contenu, Votre Style, Votre Voix</p>
             <div class="container" style="max-width: 20%; text-align: center;">
                 <a href="{{ url_for('connexion') }}">
                     <button name="submit" class="btn btn-primary w-100 py-2 my-3">Se connecter
@@ -18,7 +19,7 @@
 
         {% endif %}
         <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">Votre Contenu, Votre Style, Votre Voix</p>
+
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
                 <a href="{{ url_for('inscription') }}">
                     <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
