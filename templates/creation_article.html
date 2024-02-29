@@ -12,39 +12,23 @@
         <div class="container" style="max-width: 100%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Création d'un article</h1>
             <h2 class="h5 mb-3 fw-normal">Veuillez remplir tous les champs</h2>
-            <div class="container" style="max-width: 20%; text-align: center;">
+            <div class="container" style="max-width: 40%; text-align: center;">
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="text" name="titre" class="form-control" placeholder="Titre" aria-label="Titre">
+                        <input type="text" name="titre" class="form-control" placeholder="Titre" aria-label="titre">
                     </div>
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="text" name="date" class="form-control" placeholder="Date" aria-label="Date"
+                        <input type="text" name="date" class="form-control" placeholder="Date" aria-label="date"
                                value="{{ date }}">
                     </div>
                 </div>
                 <div class=" row g-3 py-1">
+
                     <div class="col">
-                        <input type="text" name="username" class="form-control" placeholder="Username"
-                               aria-label="username">
-                    </div>
-                </div>
-                <div class="row g-3 py-1">
-                    <div class="col">
-                        <input type="email" name="courriel" class="form-control" placeholder="Adresse courriel"
-                               aria-label="email">
-                    </div>
-                </div>
-                <div class="row g-3 py-1">
-                    <div class="col">
-                        <input type="password" name="mdp" class="form-control" placeholder="Mot de passe"
-                               aria-label="mdp">
-                    </div>
-                </div>
-                <div class="row g-3 py-1">
-                    <div class="col">
-                        <input type="file" name="photo" class="form-control" aria-label="photo">
+                            <textarea name="contenu" class="form-control" placeholder="Contenu" aria-label="contenu"
+                                      rows="15"></textarea>
                     </div>
                 </div>
                 {% if erreur %}
