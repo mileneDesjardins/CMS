@@ -8,13 +8,14 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'id' not in session:
-            redirection = "/connexion-admin"
-            if request.path == "/connexion-admin":
-                redirection = "/articles"
-            elif request.path == "/connexion-admin-nouveau":
-                redirection = "/creation-article"
-            elif request.path == "/connexion-utilisateurs":
-                redirection = "/utilisateurs"
+            print(request.path)
+            redirection = "/connexion"
+            if request.path == "/admin":
+                redirection = "/connexion-admin"
+            elif request.path == "/admin-nouveau":
+                redirection = "/connexion-admin-nouveau"
+            elif request.path == "/utilisateurs":
+                redirection = "/connexion-utilisateurs"
             return redirect(redirection, 302)
         return f(*args, **kwargs)
     return decorated_function
