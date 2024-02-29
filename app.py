@@ -102,10 +102,22 @@ def inscription():
 
 
 @app.route('/connexion', methods=['GET', 'POST'])
+@app.route('/connexion-admin', methods=['GET', 'POST'])
+@app.route('/connexion-admin-nouveau', methods=['GET', 'POST'])
+@app.route('/connexion-utilisateurs', methods=['GET', 'POST'])
 def connexion():
     titre = "Connexion"
+    redirection = "/"
+
+    if request.path == "/connexion-admin":
+        redirection = "/articles"
+    elif request.path == "/connexion-admin-nouveau":
+        redirection = "/creation-article"
+    elif request.path == "/connexion-utilisateurs":
+        redirection = "/utilisateurs"
+
     if request.method == "GET":
-        return render_template("connexion.html")
+        return render_template("connexion.html", titre=titre)
     else:
         username = request.form["username"]
         mdp = request.form["mdp"]
@@ -129,43 +141,11 @@ def connexion():
             session["prenom"] = utilisateur[0]
             session["nom"] = utilisateur[1]
             session["id_photo"] = utilisateur[4]
-            return redirect("/", 302)
+            return redirect(redirection, 302, titre=titre)
 
         else:
             return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
-@app.route('/connexion_admin', methods=['GET', 'POST'])
-def connexion_admin():
-    titre = "Connexion"
-    if request.method == "GET":
-        return render_template("connexion.html")
-    else:
-        username = request.form["username"]
-        mdp = request.form["mdp"]
-
-        if username == "" or mdp == "":
-            return render_template('connexion.html', erreur="Veuillez remplir tous les champs")
-
-        utilisateur = get_db().get_user_login_info(username)
-        if utilisateur is None:
-            return render_template('connexion.html',
-                                   erreur="Utilisateur inexistant, veuillez vérifier vos informations")
-
-        salt = utilisateur[3]
-        mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
-        if mdp_hash == utilisateur[2]:
-            # Accès autorisé
-            id_session = uuid.uuid4().hex
-            # get_db().save_session(id_session, username)
-
-            session["id"] = id_session
-            session["prenom"] = utilisateur[0]
-            session["nom"] = utilisateur[1]
-            session["id_photo"] = utilisateur[4]
-            return redirect("/articles", 302)
-
-        else:
-            return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
 @app.route('/deconnexion')
 @login_required
@@ -176,14 +156,26 @@ def deconnexion():
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    titre = "Admin"
+    titre = "Articles"
     return render_template('articles.html', titre=titre)
 
-
 @app.route('/articles', methods=['GET'])
+@login_required
 def articles():
     titre = 'Articles'
     return render_template('articles.html', titre=titre)
+
+@app.route('/admin-nouveau', methods=['GET'])
+@login_required
+def creation_article():
+    titre = 'Création article'
+    return render_template('creation_article.html', titre=titre)
+
+@app.route('/utilisateurs', methods=['GET'])
+@login_required
+def utilisateurs():
+    titre = 'Utilisateurs'
+    return render_template('utilisateurs.html', titre=titre)
 
 @app.route('/confirmation', methods=['GET'])
 def confirmation():
