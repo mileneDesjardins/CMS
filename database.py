@@ -61,6 +61,17 @@ class Database():
                        ('%' + recherche_input + '%', '%' + recherche_input + '%'))
         return cursor.fetchall()
 
+    def create_article(self, titre, date_publication, contenu, id_utilisateur):
+        id_article = str(uuid.uuid4())
+        connection = self.get_article_connection()
+        article_id = str(uuid.uuid4())
+        connection.execute(
+            "INSERT INTO articles (id_article, titre, date_publication, contenu, id_utilisateur) VALUES (?, ?, ?, ?, ?)",
+            (article_id, titre, date_publication, contenu, id_utilisateur)
+            )
+        connection.commit()
+        return id_article
+
     ### PHOTOS
     def get_photo_connection(self):
         if self.photo_connection is None:
@@ -83,7 +94,6 @@ class Database():
             return photo_data[0]
         else:
             return None
-
 
     ### SESSIONS
     def get_session_connection(self):
@@ -113,7 +123,3 @@ class Database():
         connection.execute(("delete from sessions where id_session=?"),
                            (id_session,))
         connection.commit()
-
-
-
-

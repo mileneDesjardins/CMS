@@ -165,16 +165,32 @@ def articles():
 @app.route('/admin-nouveau', methods=['GET', 'POST'])
 @login_required
 def creation_article():
-    date = datetime.date.today()
+    date_publication = datetime.date.today()
     # Formater la date au format DD-MM-YYYY
-    format_date = date.strftime("%d-%m-%Y")
+    format_date = date_publication.strftime("%d-%m-%Y")
 
     titre = 'Création article'
     if request.method == "GET":
-        return render_template("creation_article.html", date=format_date)
+        return render_template("creation_article.html", date_publication=format_date)
     else:
-        # Rendre le modèle index.html en passant la date formatée
-        return redirect('/confirmation', 302)
+        # Récupérer les données du formulaire
+        titre = request.form.get('titre')
+        date_publication = request.form.get('date_publication')
+        contenu = request.form.get('contenu')
+
+        # Vérifier si l'un des champs est vide
+        if not titre or not date_publication or not contenu:
+            erreur = "Veuillez remplir tous les champs."
+            return render_template("creation_article.html", date_publication=format_date, erreur=erreur)
+
+        # Insérer l'article dans la base de données
+        id_utilisateur = session.get('username')
+        db = Database()
+        id_article = db.create_article(titre, date_publication, contenu, id_utilisateur)
+
+        # Rediriger vers une page de confirmation avec l'ID de l'article créé
+        return redirect(url_for('confirmation', id_article=id_article))
+
 
 @app.route('/utilisateurs', methods=['GET'])
 @login_required
