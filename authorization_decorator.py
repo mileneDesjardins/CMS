@@ -1,4 +1,4 @@
-from flask import session, render_template
+from flask import session, render_template, redirect
 from functools import wraps
 
 from functools import wraps
@@ -8,6 +8,6 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'id' not in session:
-            return render_template('connexion.html')
+            return redirect('/connexion_admin', 302)
         return f(*args, **kwargs)
     return decorated_function

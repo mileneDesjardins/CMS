@@ -11,7 +11,23 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand px-3" href="{{ url_for('accueil') }}">Accueil</a>
-        <form class="d-flex mx-2" method="POST" role="search" >
+        {% if 'id' in session %}
+            <ul class="navbar-nav ms-auto">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        Utilisateurs
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Ajouter</a></li>
+                        <li><a class="dropdown-item" href="#">Modifier</a></li>
+                        <li><a class="dropdown-item" href="#">Désactiver</a></li>
+                    </ul>
+                </div>
+                <a class="navbar-brand px-3" href="{{ url_for('accueil') }}">Articles</a>
+            </ul>
+        {% endif %}
+        <form class="d-flex mx-2" method="POST" role="search">
             <label>
                 <input class="form-control me-2" name="recherche_input" placeholder="Entrez un mot clé" type="search">
             </label>

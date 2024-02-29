@@ -45,6 +45,7 @@ def accueil():
     return render_template('index.html', titre=titre, prenom=prenom, nom=nom, photo=photo)
 
 
+
 @app.route('/recherche', methods=['GET', 'POST'])
 def recherche():
     if request.method == 'POST':
@@ -129,9 +130,42 @@ def connexion():
             session["nom"] = utilisateur[1]
             session["id_photo"] = utilisateur[4]
             return redirect("/", 302)
+
         else:
             return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
+@app.route('/connexion_admin', methods=['GET', 'POST'])
+def connexion_admin():
+    titre = "Connexion"
+    if request.method == "GET":
+        return render_template("connexion.html")
+    else:
+        username = request.form["username"]
+        mdp = request.form["mdp"]
+
+        if username == "" or mdp == "":
+            return render_template('connexion.html', erreur="Veuillez remplir tous les champs")
+
+        utilisateur = get_db().get_user_login_info(username)
+        if utilisateur is None:
+            return render_template('connexion.html',
+                                   erreur="Utilisateur inexistant, veuillez vérifier vos informations")
+
+        salt = utilisateur[3]
+        mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+        if mdp_hash == utilisateur[2]:
+            # Accès autorisé
+            id_session = uuid.uuid4().hex
+            # get_db().save_session(id_session, username)
+
+            session["id"] = id_session
+            session["prenom"] = utilisateur[0]
+            session["nom"] = utilisateur[1]
+            session["id_photo"] = utilisateur[4]
+            return redirect("/articles", 302)
+
+        else:
+            return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
 @app.route('/deconnexion')
 @login_required
@@ -139,13 +173,17 @@ def deconnexion():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
 
-
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
     titre = "Admin"
-    return render_template('index.html', titre=titre)
+    return render_template('articles.html', titre=titre)
 
+
+@app.route('/articles', methods=['GET'])
+def articles():
+    titre = 'Articles'
+    return render_template('articles.html', titre=titre)
 
 @app.route('/confirmation', methods=['GET'])
 def confirmation():
