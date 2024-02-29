@@ -219,13 +219,12 @@ def creation_article():
                                    erreur=erreur)
 
         # Insérer l'article dans la base de données
-        id_utilisateur = session.get('username')
+        id_utilisateur = session.get('id')
         db = Database()
-        id_article = db.create_article(titre, date_publication, contenu, id_utilisateur)
+        id_article = db.create_article(titre_article, date_publication, contenu, id_utilisateur)
 
         # Rediriger vers une page de confirmation avec l'ID de l'article créé
-        return redirect(url_for('confirmation', titre=titre, id_article=id_article, titre_article=titre_article,
-                                date_publication=date_publication, contenu=contenu))
+        return redirect(url_for('confirmation_article', titre_article=titre_article))
 
 
 @app.route('/utilisateurs', methods=['GET'])
@@ -239,6 +238,11 @@ def utilisateurs():
 def confirmation():
     return render_template('confirmation.html')
 
+@app.route('/confirmation_article', methods=['GET'])
+def confirmation_article():
+    titre = "Création réussie"
+    titre_article = request.args.get('titre_article')
+    return render_template('confirmation_article.html', titre=titre, titre_article=titre_article)
 
 if __name__ == '__main__':
     app.run()

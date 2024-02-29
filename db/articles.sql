@@ -1,5 +1,5 @@
 CREATE TABLE ARTICLES (
-    id_article INTEGER PRIMARY KEY,
+    id_article VARCHAR(255) PRIMARY KEY,
     titre_article varchar(25) NOT NULL,
     date_publication DATE NOT NULL,
     contenu TEXT NOT NULL,

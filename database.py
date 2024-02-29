@@ -61,13 +61,12 @@ class Database():
                        ('%' + recherche_input + '%', '%' + recherche_input + '%'))
         return cursor.fetchall()
 
-    def create_article(self, titre, date_publication, contenu, id_utilisateur):
-        id_article = str(uuid.uuid4())
+    def create_article(self, titre_article, date_publication, contenu, id_utilisateur):
         connection = self.get_article_connection()
-        article_id = str(uuid.uuid4())
+        id_article = str(uuid.uuid4())
         connection.execute(
-            "INSERT INTO articles (id_article, titre, date_publication, contenu, id_utilisateur) VALUES (?, ?, ?, ?, ?)",
-            (article_id, titre, date_publication, contenu, id_utilisateur)
+            "INSERT INTO articles (id_article, titre_article, date_publication, contenu, id_utilisateur) VALUES (?, ?, ?, ?, ?)",
+            (id_article, titre_article, date_publication, contenu, id_utilisateur)
             )
         connection.commit()
         return id_article
