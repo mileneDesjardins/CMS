@@ -109,7 +109,7 @@ class Database():
         return id_session
 
     def delete_session(self, id_session):
-        connection = self.get_user_connection()
+        connection = self.get_session_connection()
         connection.execute(("delete from sessions where id_session=?"),
                            (id_session,))
         connection.commit()

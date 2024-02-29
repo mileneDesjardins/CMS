@@ -35,11 +35,14 @@ def close_connection(exception):
 @app.route('/', methods=['GET'])
 def accueil():
     titre = 'Accueil'
-    prenom = session.get('prenom')
-    nom = session.get('nom')
-    photo = None
     if "id" in session:
+        prenom = session.get('prenom')
+        nom = session.get('nom')
         photo = get_db().get_photo(session["id_photo"])
+    else:
+        prenom = None
+        nom = None
+        photo = None
     return render_template('index.html', titre=titre, prenom=prenom, nom=nom, photo=photo)
 
 @app.route('/recherche', methods=['GET', 'POST'])
@@ -115,13 +118,12 @@ def connexion():
     if mdp_hash == utilisateur[2]:
         # Accès autorisé
         id_session = uuid.uuid4().hex
-        get_db().save_session(id_session, username)
+        #get_db().save_session(id_session, username)
 
         session["id"] = id_session
         session["prenom"] = utilisateur[0]
         session["nom"] = utilisateur[1]
         session["id_photo"] = utilisateur[4]
-        print("Session après connexion : ", session)
         return redirect("/", 302)
     else:
         return render_template('index.html', erreur="Connexion impossible, veuillez vérifier vos informations")
@@ -140,10 +142,9 @@ def authentication_required(f):
 @app.route('/deconnexion')
 @authentication_required
 def logout():
-    id_session = session["id"]
-    session.pop('id', None)
-    get_db().delete_session(id_session)
+    session.clear()  # Supprime toutes les données de la session
     return redirect("/")
+
 
 
 def is_authenticated(session):

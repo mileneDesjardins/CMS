@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="px-4 pt-5 my-5 text-center">
-        {% if prenom and nom %}
+        {% if prenom is not none and nom is not none %}
             <h1 class="display-4 fw-bold text-body-emphasis">Bienvenue {{ prenom }} {{ nom }}</h1>
-            <a href="{{ url_for('connexion') }}">
+            <a href="/deconnexion">
                 <button type="deconnexion" class="btn btn-outline-secondary btn-lg px-4">Se déconnecter</button>
             </a>
         {% else %}
