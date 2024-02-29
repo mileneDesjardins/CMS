@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import uuid
 from functools import wraps
@@ -141,7 +142,7 @@ def connexion():
             session["prenom"] = utilisateur[0]
             session["nom"] = utilisateur[1]
             session["id_photo"] = utilisateur[4]
-            return redirect(redirection, 302, titre=titre)
+            return redirect(redirection, 302)
 
         else:
             return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
@@ -159,17 +160,19 @@ def admin():
     titre = "Articles"
     return render_template('articles.html', titre=titre)
 
-@app.route('/articles', methods=['GET'])
-@login_required
-def articles():
-    titre = 'Articles'
-    return render_template('articles.html', titre=titre)
-
-@app.route('/admin-nouveau', methods=['GET'])
+@app.route('/admin-nouveau', methods=['GET', 'POST'])
 @login_required
 def creation_article():
+    date = datetime.date.today()
+    # Formater la date au format DD-MM-YYYY
+    format_date = date.strftime("%d-%m-%Y")
+
     titre = 'Création article'
-    return render_template('creation_article.html', titre=titre)
+    if request.method == "GET":
+        return render_template("creation_article.html", date=format_date)
+    else:
+        # Rendre le modèle index.html en passant la date formatée
+        return redirect('/confirmation', 302)
 
 @app.route('/utilisateurs', methods=['GET'])
 @login_required
