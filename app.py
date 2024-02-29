@@ -1,10 +1,8 @@
 import datetime
 import hashlib
 import uuid
-from functools import wraps
 import os
 from dotenv import load_dotenv
-
 from flask import Flask, render_template, request, redirect, g, session, Response, url_for
 
 from authorization_decorator import login_required
@@ -13,6 +11,8 @@ from database import Database
 load_dotenv()
 app = Flask(__name__, static_url_path='', static_folder='static')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+import re
 
 
 def get_db():
@@ -44,7 +44,6 @@ def accueil():
         nom = None
         photo = None
     return render_template('index.html', titre=titre, prenom=prenom, nom=nom, photo=photo)
-
 
 
 @app.route('/recherche', methods=['GET', 'POST'])
@@ -156,11 +155,13 @@ def deconnexion():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
 
+
 @app.route('/articles', methods=['GET', 'POST'])
 @login_required
 def articles():
     titre = "Articles"
     return render_template('articles.html', titre=titre)
+
 
 @app.route('/admin-nouveau', methods=['GET', 'POST'])
 @login_required
@@ -169,9 +170,15 @@ def creation_article():
     # Formater la date au format DD-MM-YYYY
     format_date = date_publication.strftime("%d-%m-%Y")
 
+    titre_default = 'Création article'
+    erreur = None
+    titre = request.form.get('titre', titre_default)
+    date_publication = request.form.get('date_publication', format_date)
+    contenu = request.form.get('contenu')
+
     titre = 'Création article'
     if request.method == "GET":
-        return render_template("creation_article.html", date_publication=format_date)
+        return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu)
     else:
         # Récupérer les données du formulaire
         titre = request.form.get('titre')
@@ -181,7 +188,31 @@ def creation_article():
         # Vérifier si l'un des champs est vide
         if not titre or not date_publication or not contenu:
             erreur = "Veuillez remplir tous les champs."
-            return render_template("creation_article.html", date_publication=format_date, erreur=erreur)
+            return render_template("creation_article.html",titre=titre, date_publication=date_publication, contenu=contenu, erreur=erreur)
+
+        # Vérifier si le titre a au moins 3 caractères
+        if len(titre) < 3:
+            erreur = "Le titre doit avoir au moins 3 caractères."
+            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+                                   erreur=erreur)
+
+        # Vérifier si le champ titre dépasse 25 caractères
+        if len(titre) > 25:
+            erreur = "Le titre ne doit pas dépasser 25 caractères."
+            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+                                   erreur=erreur)
+
+        # Vérifier si le format de la date est valide
+        if not re.match(r'^\d{2}-\d{2}-\d{4}$', date_publication):
+            erreur = "Le format de la date de publication n'est pas valide. Utilisez le format DD-MM-YYYY."
+            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+                                   erreur=erreur)
+
+        # Vérifier si le contenu a au moins 15 caractères
+        if len(contenu) < 15:
+            erreur = "Le contenu doit avoir au moins 15 caractères."
+            return render_template("creation_article.html", titre=titre, date_publication=date_publication, contenu=contenu,
+                                   erreur=erreur)
 
         # Insérer l'article dans la base de données
         id_utilisateur = session.get('username')
@@ -189,7 +220,7 @@ def creation_article():
         id_article = db.create_article(titre, date_publication, contenu, id_utilisateur)
 
         # Rediriger vers une page de confirmation avec l'ID de l'article créé
-        return redirect(url_for('confirmation', id_article=id_article))
+        return redirect(url_for('confirmation', id_article=id_article, titre=titre, date_publication=date_publication, contenu=contenu))
 
 
 @app.route('/utilisateurs', methods=['GET'])
@@ -197,6 +228,7 @@ def creation_article():
 def utilisateurs():
     titre = 'Utilisateurs'
     return render_template('utilisateurs.html', titre=titre)
+
 
 @app.route('/confirmation', methods=['GET'])
 def confirmation():
