@@ -51,9 +51,9 @@ class Database():
 
     ### ARTICLES
     def get_article_connection(self):
-        if self.user_connection is None:
-            self.user_connection = sqlite3.connect('db/articles.db')
-        return self.user_connection
+        if self.article_connection is None:
+            self.article_connection = sqlite3.connect('db/articles.db')
+        return self.article_connection
 
     def get_articles(self, recherche_input=None):
         cursor = self.get_article_connection().cursor()
@@ -61,12 +61,12 @@ class Database():
             cursor.execute("SELECT * FROM articles WHERE titre LIKE ? OR contenu LIKE ?",
                            ('%' + recherche_input + '%', '%' + recherche_input + '%'))
         else:
-            cursor.execute("SELECT titre_article, date_publication, contenu FROM articles")
+            cursor.execute("SELECT id_article, titre_article, date_publication, contenu FROM articles")
         return cursor.fetchall()
 
     def get_article_by_id(self, id_article):
         cursor = self.get_article_connection().cursor()
-        cursor.execute("SELECT titre_article, date_publication, contenu FROM articles WHERE id_article = ?",
+        cursor.execute("SELECT id_article, titre_article, date_publication, contenu FROM articles WHERE id_article = ?",
                        (id_article,))
         return cursor.fetchone()
 

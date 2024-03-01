@@ -38,11 +38,9 @@ def accueil():
     if "id" in session:
         prenom = session.get('prenom')
         nom = session.get('nom')
-        photo = get_db().get_photo(session["id_photo"])
     else:
         prenom = None
         nom = None
-        photo = None
     return render_template('index.html', titre=titre, prenom=prenom, nom=nom, photo=photo)
 
 
@@ -165,14 +163,31 @@ def articles():
     articles = db.get_articles()  # Utilisez la fonction pour récupérer tous les articles
     return render_template('articles.html', titre=titre, articles=articles)
 
+
+from flask import Flask, render_template, abort
+
+
 @app.route('/article/<identifiant>', methods=['GET'])
 def article(identifiant):
     titre = "Article"
-    # Récupérer l'article spécifique depuis la base de données en utilisant son identifiant
-    db = get_db()
-    article = db.get_article_by_id(identifiant)  # Utilisez la fonction pour récupérer un article par son ID
-    return render_template('article.html', titre=titre, article=article)
+    prenom = session.get('prenom')
+    nom = session.get('nom')
+    photo = get_db().get_photo(session["id_photo"])
 
+    db = get_db()
+    article = db.get_article_by_id(identifiant)  # Récupérer un article par son ID
+
+    if article is None:
+        return render_template('404.html'), 404
+
+    return render_template('article.html', titre=titre, article=article, prenom=prenom, nom=nom, photo=photo)
+
+
+@app.route('/photo/<id_photo>')
+def photo(id_photo):
+    photo_data = get_db().get_photo(id_photo)
+    if photo_data:
+        return Response(photo_data, mimetype='application/octet-stream')
 
 
 @app.route('/admin-nouveau', methods=['GET', 'POST'])
@@ -233,10 +248,10 @@ def creation_article():
         # Insérer l'article dans la base de données
         id_utilisateur = session.get('id')
         db = Database()
-        id_article = db.create_article(titre_article, date_publication, contenu, id_utilisateur)
+        article = db.create_article(titre_article, date_publication, contenu, id_utilisateur)
 
         # Rediriger vers une page de confirmation avec l'ID de l'article créé
-        return redirect(url_for('confirmation_article', titre_article=titre_article))
+        return redirect(url_for('confirmation_article', titre_article=titre_article, article=article))
 
 
 @app.route('/utilisateurs', methods=['GET'])
