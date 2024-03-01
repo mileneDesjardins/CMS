@@ -13,12 +13,36 @@
                 <p class="lead">{{ article[3] }}</p>
                 {% if session.get('id') %}
                     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                        <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Modifier</button>
+                        <button type="button" class="btn btn-primary btn-lg px-4 me-md-2" onclick="afficherFormulaire()">Modifier</button>
                     </div>
 
-
+                    <div id="formModification" style="display: none;">
+                        <form action="{{ url_for('modifier_article', identifiant=article[0]) }}" method="POST">
+                            <div class="mb-3">
+                                <label for="nouveauTitre" class="form-label">Nouveau titre :</label>
+                                <input type="text" class="form-control" id="nouveauTitre" name="nouveau_titre">
+                            </div>
+                            <div class="mb-3">
+                                <label for="nouveauContenu" class="form-label">Nouveau contenu :</label>
+                                <textarea class="form-control" id="nouveauContenu" rows="5"
+                                          name="nouveau_contenu"></textarea>
+                            </div>
+                            <input type="hidden" name="id_article" value="{{ article[0] }}">
+                            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                        </form>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
+    <script>
+        function afficherFormulaire() {
+            var formulaire = document.getElementById('formModification');
+            if (formulaire.style.display === 'none') {
+                formulaire.style.display = 'block';
+            } else {
+                formulaire.style.display = 'none';
+            }
+        }
+    </script>
 {% endblock %}

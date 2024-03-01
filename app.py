@@ -3,7 +3,7 @@ import hashlib
 import uuid
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, g, session, Response, url_for
+from flask import Flask, render_template, request, redirect, g, session, Response, url_for, jsonify, flash
 
 from authorization_decorator import login_required
 from database import Database
@@ -181,6 +181,31 @@ def article(identifiant):
         return render_template('404.html'), 404
 
     return render_template('article.html', titre=titre, article=article, prenom=prenom, nom=nom, photo=photo)
+
+@app.route('/modifier-article/<identifiant>', methods=['POST'])
+@login_required
+def modifier_article(identifiant):
+    if request.method == 'POST':
+        nouveau_titre = request.form.get('nouveau_titre')
+        nouveau_contenu = request.form.get('nouveau_contenu')
+        id_article = request.form.get('id_article')
+
+        # Vérifier si au moins l'un des champs est rempli
+        if nouveau_titre or nouveau_contenu:
+            db = get_db()
+            article = db.get_article_by_id(identifiant)
+            if article:
+                if nouveau_titre:
+                    db.update_article_titre(identifiant, nouveau_titre)
+                if nouveau_contenu:
+                    db.update_article_contenu(identifiant, nouveau_contenu)
+                flash('Article modifié avec succès.', 'success')
+            else:
+                flash('Article non trouvé.', 'error')
+        else:
+            flash('Le nouveau titre ou le nouveau contenu est obligatoire.', 'error')
+    return redirect(url_for('article', identifiant=identifiant))
+
 
 
 @app.route('/photo/<id_photo>')

@@ -80,6 +80,22 @@ class Database():
         connection.commit()
         return id_article
 
+    def update_article_titre(self, id_article, nouveau_titre):
+        connection = self.get_article_connection()
+        connection.execute(
+            "UPDATE articles SET titre_article = ? WHERE id_article = ?",
+            (nouveau_titre, id_article)
+        )
+        connection.commit()
+
+    def update_article_contenu(self, id_article, nouveau_contenu):
+        connection = self.get_article_connection()
+        connection.execute(
+            "UPDATE articles SET contenu = ? WHERE id_article = ?",
+            (nouveau_contenu, id_article)
+        )
+        connection.commit()
+
     ### PHOTOS
     def get_photo_connection(self):
         if self.photo_connection is None:
