@@ -10,8 +10,10 @@
         </div>
         <h1 class="display-5 fw-bold text-body-emphasis text-center">Tous les utilisateurs</h1>
         <div class="d-grid gap-2 my-3 d-sm-flex justify-content-sm-center">
-            <a href="{{ url_for('creation_article') }}">
-                <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Créer un utilisateur</button>
+            <a href="{{ url_for('inscription') }}">
+                <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
+                    Créer un utilisateur
+                </button>
             </a>
         </div>
         {% for batch in utilisateurs|batch(4) %}
@@ -22,7 +24,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ utilisateur[1] }} {{ utilisateur[2] }}
                                     {% if utilisateur[8] == 0 %}
-                                        <span class="badge bg-danger">Désactivé</span>
+                                        <span class="badge bg-danger badge-sm">Désactivé</span>
                                     {% endif %}
                                 </h5>
                                 <p class="card-text my-0">Username: {{ utilisateur[3] }}</p>

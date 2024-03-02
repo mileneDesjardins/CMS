@@ -126,6 +126,10 @@ def connexion():
             return render_template('connexion.html',
                                    erreur="Utilisateur inexistant, veuillez vérifier vos informations")
 
+        # Vérifier si l'utilisateur est désactivé
+        if utilisateur[6] == 0:
+            return render_template('connexion.html', erreur="Connexion impossible. Votre compte est désactivé.")
+
         salt = utilisateur[3]
         mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
         if mdp_hash == utilisateur[2]:
@@ -139,7 +143,6 @@ def connexion():
             session["nom"] = utilisateur[1]
             session["id_photo"] = utilisateur[4]
             return redirect(redirection, 302)
-
         else:
             return render_template('connexion.html', erreur="Connexion impossible, veuillez vérifier vos informations")
 
