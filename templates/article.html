@@ -4,7 +4,7 @@
         <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
             <div class="col-10 col-sm-8 col-lg-6">
                 <h3 style="text-align: center">{{ utilisateur[1] }} {{ utilisateur[2] }}</h3>
-                <img src="{{ url_for('photo', id_photo=session.get('id_photo')) }}" class="d-block mx-lg-auto img-fluid"
+                <img src="{{ url_for('photo', id_photo=utilisateur[7]) }}" class="d-block mx-lg-auto img-fluid"
                      alt="Bootstrap Themes" width="300px" height="auto" loading="lazy">
             </div>
             <div class="col-lg-6">
