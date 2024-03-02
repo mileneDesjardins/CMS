@@ -1,6 +1,6 @@
 CREATE TABLE ARTICLES (
     id_article VARCHAR(50) PRIMARY KEY,
-    titre_article varchar(25) NOT NULL,
+    titre_article varchar(100) NOT NULL,
     date_publication DATE NOT NULL,
     contenu TEXT NOT NULL,
     id_utilisateur INTEGER NOT NULL,

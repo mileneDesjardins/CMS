@@ -20,14 +20,14 @@
                         <form action="{{ url_for('modifier_article', identifiant=article[0]) }}" method="POST">
                             <div class="mb-3">
                                 <label for="nouveauTitre" class="form-label">Nouveau titre :</label>
-                                <input type="text" class="form-control" id="nouveauTitre" name="nouveau_titre">
+                                <input type="text" class="form-control" id="nouveauTitre" name="nouveau_titre" value="{{ article[1] }}">
                             </div>
                             <div class="mb-3">
                                 <label for="nouveauContenu" class="form-label">Nouveau contenu :</label>
-                                <textarea class="form-control" id="nouveauContenu" rows="5"
-                                          name="nouveau_contenu"></textarea>
+                                <textarea class="form-control" id="nouveauContenu" rows="15"
+                                          name="nouveau_contenu">{{ article[3] }}</textarea>
                             </div>
-                            <input type="hidden" name="id_article" value="{{ article[0] }}">
+                            <input type="hidden" name="id_article" value="{{ article[2] }}">
                             <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
                         </form>
                     </div>

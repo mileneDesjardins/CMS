@@ -234,13 +234,11 @@ def creation_article():
     format_date = date_publication.strftime("%d-%m-%Y")
 
     titre = 'Création article'
-    titre_article_default = "Titre"
 
     if request.method == "GET":
-        titre_article = titre_article_default
-        return render_template("creation_article.html", titre=titre, titre_article=titre_article,
+        return render_template("creation_article.html", titre=titre, titre_article="",
                                date_publication=format_date,
-                               contenu="")
+                               contenu="", erreur="")
     else:
         # Récupérer les données du formulaire
         titre_article = request.form.get('titre_article')
@@ -260,9 +258,9 @@ def creation_article():
                                    date_publication=date_publication, contenu=contenu,
                                    erreur=erreur)
 
-        # Vérifier si le champ titre dépasse 25 caractères
-        if len(titre_article) > 25:
-            erreur = "Le titre ne doit pas dépasser 25 caractères."
+        # Vérifier si le champ titre dépasse 100 caractères
+        if len(titre_article) > 100:
+            erreur = "Le titre ne doit pas dépasser 100 caractères."
             return render_template("creation_article.html", titre=titre, titre_article=titre_article,
                                    date_publication=date_publication, contenu=contenu,
                                    erreur=erreur)
@@ -282,9 +280,7 @@ def creation_article():
                                    erreur=erreur)
 
         # Insérer l'article dans la base de données
-
         db = Database()
-        print(session)
         id_utilisateur = session.get('id')
         article = db.create_article(titre_article, date_publication, contenu, id_utilisateur)
 
@@ -366,6 +362,7 @@ def desactiver_utilisateur(identifiant):
         return render_template('404.html'), 404
 
     return render_template('utilisateurs.html', utilisateur=utilisateur)
+
 
 @app.route('/confirmation', methods=['GET'])
 def confirmation():
