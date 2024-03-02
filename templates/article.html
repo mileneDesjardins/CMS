@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="container col-xxl-8 px-4 py-5">
-        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="row flex-lg-row-reverse  g-5 py-5">
             <div class="col-10 col-sm-8 col-lg-6">
-                <h3 style="text-align: center">{{ utilisateur[1] }} {{ utilisateur[2] }}</h3>
                 <img src="{{ url_for('photo', id_photo=utilisateur[7]) }}" class="d-block mx-lg-auto img-fluid"
-                     alt="Bootstrap Themes" width="300px" height="auto" loading="lazy">
+                     alt="Bootstrap Themes" width="200px" height="auto" loading="lazy">
+                <h5 style="text-align: center">{{ utilisateur[1] }} {{ utilisateur[2] }}</h5>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <h4>{{ article[2] }}</h4>
                 <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">{{ article[1] }}</h1>
                 <p class="lead">{{ article[3] }}</p>
