@@ -134,6 +134,7 @@ def connexion():
             # get_db().save_session(id_session, username)
 
             session["id"] = id_session
+            session["id_utilisateur"] = utilisateur[5]
             session["prenom"] = utilisateur[0]
             session["nom"] = utilisateur[1]
             session["id_photo"] = utilisateur[4]
@@ -171,8 +172,6 @@ def articles():
 @app.route('/article/<identifiant>', methods=['GET'])
 def article(identifiant):
     titre = "Article"
-    prenom = session.get('prenom')
-    nom = session.get('nom')
     photo = get_db().get_photo(session["id_photo"])
 
     db = get_db()
@@ -181,7 +180,10 @@ def article(identifiant):
     if article is None:
         return render_template('404.html'), 404
 
-    return render_template('article.html', titre=titre, article=article, prenom=prenom, nom=nom, photo=photo)
+    id_utilisateur = session.get('id_utilisateur')
+    utilisateur = db.get_user_by_id(id_utilisateur)
+    return render_template('article.html', titre=titre, article=article,
+                           utilisateur=utilisateur, photo=photo)
 
 
 @app.route('/modifier-article/<identifiant>', methods=['POST'])
@@ -233,7 +235,6 @@ def creation_article():
 
     titre = 'Création article'
     titre_article_default = "Titre"
-    erreur = None
 
     if request.method == "GET":
         titre_article = titre_article_default
@@ -281,8 +282,10 @@ def creation_article():
                                    erreur=erreur)
 
         # Insérer l'article dans la base de données
-        id_utilisateur = session.get('id')
+
         db = Database()
+        print(session)
+        id_utilisateur = session.get('id')
         article = db.create_article(titre_article, date_publication, contenu, id_utilisateur)
 
         # Rediriger vers une page de confirmation avec l'ID de l'article créé

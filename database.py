@@ -40,9 +40,14 @@ class Database():
             "SELECT * FROM utilisateurs WHERE id_utilisateur = ?",
             (id_utilisateur,)
         )
-        utilisateur = cursor.fetchone()
-        connection.close()
-        return utilisateur
+        return cursor.fetchone()
+
+
+    def get_article_by_id(self, id_article):
+        cursor = self.get_article_connection().cursor()
+        cursor.execute("SELECT * FROM articles WHERE id_article = ?",
+                       (id_article,))
+        return cursor.fetchone()
 
     def get_all_users(self):
         cursor = self.get_user_connection().cursor()
@@ -100,7 +105,7 @@ class Database():
     def get_user_login_info(self, username):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
-            "select prenom, nom, mdp_hash, mdp_salt, id_photo from utilisateurs where username=?"),
+            "select prenom, nom, mdp_hash, mdp_salt, id_photo, id_utilisateur from utilisateurs where username=?"),
             (username,))
         return cursor.fetchone()
 
@@ -127,12 +132,12 @@ class Database():
             cursor.execute("SELECT * FROM articles WHERE titre LIKE ? OR contenu LIKE ?",
                            ('%' + recherche_input + '%', '%' + recherche_input + '%'))
         else:
-            cursor.execute("SELECT id_article, titre_article, date_publication, contenu FROM articles")
+            cursor.execute("SELECT id_article, titre_article, date_publication, contenu, id_utilisateur FROM articles")
         return cursor.fetchall()
 
     def get_article_by_id(self, id_article):
         cursor = self.get_article_connection().cursor()
-        cursor.execute("SELECT id_article, titre_article, date_publication, contenu FROM articles WHERE id_article = ?",
+        cursor.execute("SELECT * FROM articles WHERE id_article = ?",
                        (id_article,))
         return cursor.fetchone()
 
