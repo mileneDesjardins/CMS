@@ -8,37 +8,38 @@
                 <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"></path>
             </svg>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-lg-3 col-md-6 col-sm-8">
-                <h1 class="display-5 fw-bold text-body-emphasis text-center">Tous les utilisateurs</h1>
-                <div class="d-grid gap-2 my-3 d-sm-flex justify-content-sm-center">
-                    <a href="{{ url_for('creation_article') }}">
-                        <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Créer un utilisateur</button>
-                    </a>
-                </div>
-                <div class="card my-5">
-                    {% for utilisateur in utilisateurs %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ utilisateur[1] }} {{ utilisateur[2] }}</h5>
-                            <p class="card-text my-0">Username: {{ utilisateur[3] }}</p>
-                            <p class="card-text">Courriel: {{ utilisateur[4] }}</p>
-                            {% if utilisateur[8] == 0 %}
-                                <span class="badge bg-danger">Désactivé</span>
-                            {% endif %}
-                            <div style="display: flex; justify-content: space-around;">
-                                <a href="/modifier-utilisateur/{{ utilisateur[0] }}" class="btn-primary">
-                                    <button type="button" class="btn btn-primary btn-sm">Modifier</button>
-                                </a>
-                                <form action="/desactiver-utilisateur/{{ utilisateur[0] }}" method="post">
-                                    <input type="hidden" name="action" value="desactiver">
-                                    <button type="submit" class="btn btn-danger btn-sm">Désactiver</button>
-                                </form>
+        <h1 class="display-5 fw-bold text-body-emphasis text-center">Tous les utilisateurs</h1>
+        <div class="d-grid gap-2 my-3 d-sm-flex justify-content-sm-center">
+            <a href="{{ url_for('creation_article') }}">
+                <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Créer un utilisateur</button>
+            </a>
+        </div>
+        {% for batch in utilisateurs|batch(4) %}
+            <div class="row justify-content-center">
+                {% for utilisateur in batch %}
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card my-3">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ utilisateur[1] }} {{ utilisateur[2] }}</h5>
+                                <p class="card-text my-0">Username: {{ utilisateur[3] }}</p>
+                                <p class="card-text">Courriel: {{ utilisateur[4] }}</p>
+                                {% if utilisateur[8] == 0 %}
+                                    <span class="badge bg-danger">Désactivé</span>
+                                {% endif %}
+                                <div style="display: flex; justify-content: space-around;">
+                                    <a href="/modifier-utilisateur/{{ utilisateur[0] }}" class="btn-primary">
+                                        <button type="button" class="btn btn-primary btn-sm">Modifier</button>
+                                    </a>
+                                    <form action="/desactiver-utilisateur/{{ utilisateur[0] }}" method="post">
+                                        <input type="hidden" name="action" value="desactiver">
+                                        <button type="submit" class="btn btn-danger btn-sm">Désactiver</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-
-                    {% endfor %}
-                </div>
+                    </div>
+                {% endfor %}
             </div>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}
