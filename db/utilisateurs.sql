@@ -7,6 +7,7 @@ CREATE TABLE UTILISATEURS (
     mdp_hash varchar(128) NOT NULL,
     mdp_salt varchar(32) NOT NULL,
     id_photo INTEGER NOT NULL,
+    etat BOOLEAN NOT NULL DEFAULT 1,
     CONSTRAINT fk_photo
         FOREIGN KEY (id_photo)
         REFERENCES PHOTOS(id_photo)
