@@ -183,8 +183,7 @@ def article(identifiant):
     if article is None:
         return render_template('404.html'), 404
 
-    id_utilisateur = session.get('id_utilisateur')
-    utilisateur = db.get_user_by_id(id_utilisateur)
+    utilisateur = db.get_user_by_id(article[4])
     return render_template('article.html', titre=titre, article=article,
                            utilisateur=utilisateur, photo=photo)
 
@@ -284,7 +283,7 @@ def creation_article():
 
         # Insérer l'article dans la base de données
         db = Database()
-        id_utilisateur = session.get('id')
+        id_utilisateur = session.get('id_utilisateur')
         article = db.create_article(titre_article, date_publication, contenu, id_utilisateur)
 
         # Rediriger vers une page de confirmation avec l'ID de l'article créé
