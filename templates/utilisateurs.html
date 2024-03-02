@@ -20,11 +20,16 @@
                     {% for utilisateur in utilisateurs %}
                         <div class="card-body">
                             <h5 class="card-title">{{ utilisateur[1] }} {{ utilisateur[2] }}</h5>
-                            <p class="card-text">Username: {{ utilisateur[3] }}</p>
+                            <p class="card-text my-0">Username: {{ utilisateur[3] }}</p>
                             <p class="card-text">Courriel: {{ utilisateur[4] }}</p>
-                            <a href="/modifier-utilisateur/{{ utilisateur[0] }}" class="btn btn-primary">Modifier le
-                                profil</a>
+                            <a href="/modifier-utilisateur/{{ utilisateur[0] }}" class="btn-primary">
+                                <button type="button" class="btn btn-primary btn-sm">Modifier</button>
+                            </a>
+                            <a href="/desactiver-utilisateur/{{ utilisateur[0] }}" class="btn-primary">
+                                <button type="button" class="btn btn-secondary btn-sm">Désactiver</button>
+                            </a>
                         </div>
+
                     {% endfor %}
                 </div>
             </div>

@@ -339,6 +339,10 @@ def modifier_utilisateur(identifiant):
         # Rediriger vers la page de tous les utilisateurs
         return redirect(url_for('utilisateurs'))
 
+@app.route('/desactiver-utilisateur/<identifiant>', methods=['GET', 'POST'])
+@login_required
+def desactiver_utilisateur():
+    pass
 
 @app.route('/confirmation', methods=['GET'])
 def confirmation():
