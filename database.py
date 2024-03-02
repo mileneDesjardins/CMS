@@ -52,7 +52,7 @@ class Database():
     def update_user_prenom(self, id_utilisateur, nouveau_prenom):
         connection = self.get_user_connection()
         connection.execute(
-            "UPDATE utilisateurs SET prenom=? WHERE username=?",
+            "UPDATE utilisateurs SET prenom=? WHERE id_utilisateur=?",
             (nouveau_prenom, id_utilisateur)
         )
         connection.commit()
@@ -60,7 +60,7 @@ class Database():
     def update_user_nom(self, id_utilisateur, nouveau_nom):
         connection = self.get_user_connection()
         connection.execute(
-            "UPDATE utilisateurs SET nom=? WHERE username=?",
+            "UPDATE utilisateurs SET nom=? WHERE id_utilisateur=?",
             (nouveau_nom, id_utilisateur)
         )
         connection.commit()
@@ -68,7 +68,7 @@ class Database():
     def update_user_username(self, id_utilisateur, nouveau_username):
         connection = self.get_user_connection()
         connection.execute(
-            "UPDATE utilisateurs SET username=? WHERE username=?",
+            "UPDATE utilisateurs SET username=? WHERE id_utilisateur=?",
             (nouveau_username, id_utilisateur)
         )
         connection.commit()
@@ -76,7 +76,7 @@ class Database():
     def update_user_courriel(self, id_utilisateur, nouveau_courriel):
         connection = self.get_user_connection()
         connection.execute(
-            "UPDATE utilisateurs SET courriel=? WHERE username=?",
+            "UPDATE utilisateurs SET courriel=? WHERE id_utilisateur=?",
             (nouveau_courriel, id_utilisateur)
         )
         connection.commit()
