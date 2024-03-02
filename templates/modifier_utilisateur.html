@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; margin-top: 3%; margin-bottom: 1%;">
+        <svg fill="#000000" width="100px" height="100px" viewBox="0 0 16 16" id="register-16px"
+             xmlns="http://www.w3.org/2000/svg">
+            <path id="Path_184" data-name="Path 184"
+                  d="M57.5,41a.5.5,0,0,0-.5.5V43H47V31h2v.5a.5.5,0,0,0,.5.5h5a.5.5,0,0,0,.5-.5V31h2v.5a.5.5,0,0,0,1,0v-1a.5.5,0,0,0-.5-.5H55v-.5A1.5,1.5,0,0,0,53.5,28h-3A1.5,1.5,0,0,0,49,29.5V30H46.5a.5.5,0,0,0-.5.5v13a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5v-2A.5.5,0,0,0,57.5,41ZM50,29.5a.5.5,0,0,1,.5-.5h3a.5.5,0,0,1,.5.5V31H50Zm11.854,4.646-2-2a.5.5,0,0,0-.708,0l-6,6A.5.5,0,0,0,53,38.5v2a.5.5,0,0,0,.5.5h2a.5.5,0,0,0,.354-.146l6-6A.5.5,0,0,0,61.854,34.146ZM54,40V38.707l5.5-5.5L60.793,34.5l-5.5,5.5Zm-2,.5a.5.5,0,0,1-.5.5h-2a.5.5,0,0,1,0-1h2A.5.5,0,0,1,52,40.5Zm0-3a.5.5,0,0,1-.5.5h-2a.5.5,0,0,1,0-1h2A.5.5,0,0,1,52,37.5ZM54.5,35h-5a.5.5,0,0,1,0-1h5a.5.5,0,0,1,0,1Z"
+                  transform="translate(-46 -28)"></path>
+        </svg>
+    </div>
+    <form action="{{ url_for('modifier_utilisateur', identifiant=utilisateur[0])}}" method="POST"
+          enctype="multipart/form-data">
+        <div class="container" style="max-width: 100%; text-align: center;">
+            <h1 class="h3 mb-1 fw-normal">Modifier l'utilisateur</h1>
+
+            <div class="container" style="max-width: 20%; text-align: center;">
+                <div class="row g-3 py-1">
+                    <div class="col">
+                        <input type="text" name="prenom" class="form-control" placeholder="Prénom" aria-label="Prénom"
+                               value="{{ utilisateur[1] }}">
+                    </div>
+                </div>
+                <div class="row g-3 py-1">
+                    <div class="col">
+                        <input type="text" name="nom" class="form-control" placeholder="Nom" aria-label="Nom"
+                               value="{{ utilisateur[2] }}">
+                    </div>
+                </div>
+                <div class="row g-3 py-1">
+                    <div class="col">
+                        <input type="text" name="username" class="form-control" placeholder="Username"
+                               aria-label="username" value="{{ utilisateur[3] }}">
+                    </div>
+                </div>
+                <div class="row g-3 py-1">
+                    <div class="col">
+                        <input type="email" name="courriel" class="form-control" placeholder="Adresse courriel"
+                               aria-label="email" value="{{ utilisateur[4] }}">
+                    </div>
+                </div>
+                <div class="row py-1">
+                    <label for="photo" class="form-label">Photo actuelle</label>
+                    <div class="col">
+
+                        <img src="{{ url_for('photo', id_photo=utilisateur[7]) }}" class="img-thumbnail"
+                             style="max-width: 200px;">
+                        <div class="input-group">
+                            <input type="text" id="photo" class="form-control" value="{{ utilisateur[7] }}" disabled>
+                            <button type="button" class="btn btn-secondary"
+                                    onclick="document.getElementById('nouvelle_photo').click()">Changer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 py-1">
+                    <div class="col">
+                        <input type="file" id="nouvelle_photo" name="photo" class="form-control" style="display: none;">
+                    </div>
+                </div>
+                {% if erreur %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ erreur }}
+                    </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary my-4">Enregistrer les modifications</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

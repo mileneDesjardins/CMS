@@ -33,6 +33,70 @@ class Database():
              " values(?, ?, ?, ?, ?, ?, ?)"), (prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo))
         connection.commit()
 
+    def get_user_by_id(self, id_utilisateur):
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT * FROM utilisateurs WHERE id_utilisateur = ?",
+            (id_utilisateur,)
+        )
+        utilisateur = cursor.fetchone()
+        connection.close()
+        return utilisateur
+
+    def get_all_users(self):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute("SELECT * FROM utilisateurs")
+        return cursor.fetchall()
+
+    def update_user_prenom(self, id_utilisateur, nouveau_prenom):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE utilisateurs SET prenom=? WHERE username=?",
+            (nouveau_prenom, id_utilisateur)
+        )
+        connection.commit()
+
+    def update_user_nom(self, id_utilisateur, nouveau_nom):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE utilisateurs SET nom=? WHERE username=?",
+            (nouveau_nom, id_utilisateur)
+        )
+        connection.commit()
+
+    def update_user_username(self, id_utilisateur, nouveau_username):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE utilisateurs SET username=? WHERE username=?",
+            (nouveau_username, id_utilisateur)
+        )
+        connection.commit()
+
+    def update_user_courriel(self, id_utilisateur, nouveau_courriel):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE utilisateurs SET courriel=? WHERE username=?",
+            (nouveau_courriel, id_utilisateur)
+        )
+        connection.commit()
+
+    def update_user_photo(self, id_utilisateur, nouveau_id_photo):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE utilisateurs SET id_photo=? WHERE id_utilisateur=?",
+            (nouveau_id_photo, id_utilisateur)
+        )
+        connection.commit()
+
+    def update_photo_id(self, id_utilisateur, nouveau_id_photo):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE photos SET id_photo=? WHERE id_utilisateur=?",
+            (nouveau_id_photo, id_utilisateur)
+        )
+        connection.commit()
+
     def get_user_login_info(self, username):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
@@ -48,6 +112,8 @@ class Database():
             return False
         else:
             return True
+
+
 
     ### ARTICLES
     def get_article_connection(self):

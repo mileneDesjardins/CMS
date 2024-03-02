@@ -108,7 +108,7 @@ def connexion():
     elif request.path == "/connexion-admin":
         redirection = "/articles"
     elif request.path == "/connexion-admin-nouveau":
-        redirection = "/creation-article"
+        redirection = "/creation_article"
     elif request.path == "/connexion-utilisateurs":
         redirection = "/utilisateurs"
 
@@ -149,12 +149,14 @@ def deconnexion():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
 
+
 @app.route('/admin', methods=['GET'])
 @login_required
 def admin():
     titre = "Articles"
     # Récupérer tous les articles depuis la base de données
     return render_template('articles.html', titre=titre, articles=articles)
+
 
 @app.route('/articles', methods=['GET'])
 @login_required
@@ -164,7 +166,6 @@ def articles():
     db = get_db()
     articles = db.get_articles()  # Utilisez la fonction pour récupérer tous les articles
     return render_template('articles.html', titre=titre, articles=articles)
-
 
 
 @app.route('/article/<identifiant>', methods=['GET'])
@@ -216,6 +217,14 @@ def photo(id_photo):
 
 
 @app.route('/admin-nouveau', methods=['GET', 'POST'])
+@login_required
+def admin_nouveau():
+    titre = "Création article"
+    # Récupérer tous les articles depuis la base de données
+    return render_template('creation_article.html', titre=titre)
+
+
+@app.route('/creation-article', methods=['GET', 'POST'])
 @login_required
 def creation_article():
     date_publication = datetime.date.today()
@@ -280,11 +289,53 @@ def creation_article():
         return redirect(url_for('confirmation_article', titre_article=titre_article, article=article))
 
 
-@app.route('/utilisateurs', methods=['GET'])
+@app.route('/utilisateurs', methods=['GET', "POST"])
 @login_required
 def utilisateurs():
     titre = 'Utilisateurs'
-    return render_template('utilisateurs.html', titre=titre)
+    db = Database()
+    utilisateurs = db.get_all_users()
+    return render_template('utilisateurs.html', titre=titre, utilisateurs=utilisateurs)
+
+
+@app.route('/modifier-utilisateur/<identifiant>', methods=['GET', 'POST'])
+@login_required
+def modifier_utilisateur(identifiant):
+    titre = 'Modifier utilisateur'
+    db = Database()
+
+    if request.method == 'GET':
+        # Récupérer les informations de l'utilisateur
+        utilisateur = db.get_user_by_id(identifiant)
+        if not utilisateur:
+            return render_template('404.html'), 404
+        return render_template('modifier_utilisateur.html', titre=titre, utilisateur=utilisateur)
+
+    elif request.method == 'POST':
+        # Récupérer les informations soumises dans le formulaire
+        nouveau_prenom = request.form.get('prenom')
+        nouveau_nom = request.form.get('nom')
+        nouveau_username = request.form.get('username')
+        nouveau_courriel = request.form.get('courriel')
+        nouvelle_photo = request.files.get('photo')
+
+        # Mettre à jour les champs si les nouvelles valeurs sont fournies
+        if nouveau_prenom:
+            db.update_user_prenom(identifiant, nouveau_prenom)
+        if nouveau_nom:
+            db.update_user_nom(identifiant, nouveau_nom)
+        if nouveau_username:
+            db.update_user_username(identifiant, nouveau_username)
+        if nouveau_courriel:
+            db.update_user_courriel(identifiant, nouveau_courriel)
+        if nouvelle_photo:
+            # Stocker la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
+            nouveau_id_photo = db.create_photo(nouvelle_photo.stream.read())
+            db.update_user_photo(identifiant, nouveau_id_photo)
+            db.update_photo_id(identifiant, nouveau_id_photo)
+
+        # Rediriger vers la page de tous les utilisateurs
+        return redirect(url_for('utilisateurs'))
 
 
 @app.route('/confirmation', methods=['GET'])
