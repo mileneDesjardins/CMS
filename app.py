@@ -335,7 +335,6 @@ def modifier_utilisateur(identifiant):
             # Stocker la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
             nouveau_id_photo = db.create_photo(nouvelle_photo.stream.read())
             db.update_user_photo(identifiant, nouveau_id_photo)
-            db.update_photo_id(identifiant, nouveau_id_photo)
 
         # Rediriger vers la page de tous les utilisateurs
         return redirect(url_for('utilisateurs'))

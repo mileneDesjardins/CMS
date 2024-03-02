@@ -15,14 +15,15 @@
         </div>
     </div>
     <div class="container">
-        <div class="row">
+        <div class="row mb-5" style="justify-content: center;">
             {% for article in articles %}
                 <div class="col-md-4 mb-4">
-                    <div class="card">
+
+                    <div class="card mx-auto" style="width: 18rem;">
                         <div class="card-body">
-                            <h5 class="card-title">{{ article[1] }}</h5> <!-- Titre de l'article -->
-                            <h6 class="card-subtitle mb-2 text-muted">{{ article[2] }}</h6> <!-- Date de publication -->
-                            <a href="{{ url_for('article', identifiant=article[0]) }}" class="card-link">Modifier</a>
+                            <a href="{{ url_for('article', identifiant=article[0]) }}" class="card-link">
+                                <h5 class="card-title">{{ article[1] }}</h5></a>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ article[2] }}</h6>
                         </div>
                     </div>
                 </div>

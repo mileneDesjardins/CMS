@@ -43,12 +43,6 @@ class Database():
         return cursor.fetchone()
 
 
-    def get_article_by_id(self, id_article):
-        cursor = self.get_article_connection().cursor()
-        cursor.execute("SELECT * FROM articles WHERE id_article = ?",
-                       (id_article,))
-        return cursor.fetchone()
-
     def get_all_users(self):
         cursor = self.get_user_connection().cursor()
         cursor.execute("SELECT * FROM utilisateurs")
@@ -94,13 +88,6 @@ class Database():
         )
         connection.commit()
 
-    def update_photo_id(self, id_utilisateur, nouveau_id_photo):
-        connection = self.get_user_connection()
-        connection.execute(
-            "UPDATE photos SET id_photo=? WHERE id_utilisateur=?",
-            (nouveau_id_photo, id_utilisateur)
-        )
-        connection.commit()
 
     def get_user_login_info(self, username):
         cursor = self.get_user_connection().cursor()
