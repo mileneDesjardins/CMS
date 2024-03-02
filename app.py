@@ -4,6 +4,7 @@ import uuid
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, g, session, Response, url_for, jsonify, flash
+import re
 
 from authorization_decorator import login_required
 from database import Database
@@ -11,8 +12,6 @@ from database import Database
 load_dotenv()
 app = Flask(__name__, static_url_path='', static_folder='static')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
-import re
 
 
 def get_db():
@@ -28,9 +27,6 @@ def close_connection(exception):
     if db is not None:
         db.disconnect()
 
-
-# regex = r"[^A-Za-z0-9_#$]"
-# mdp_existant = re.compile(regex).match(request)
 
 @app.route('/', methods=['GET'])
 def accueil():
@@ -153,6 +149,12 @@ def deconnexion():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
 
+@app.route('/admin', methods=['GET'])
+@login_required
+def admin():
+    titre = "Articles"
+    # Récupérer tous les articles depuis la base de données
+    return render_template('articles.html', titre=titre, articles=articles)
 
 @app.route('/articles', methods=['GET'])
 @login_required
@@ -163,8 +165,6 @@ def articles():
     articles = db.get_articles()  # Utilisez la fonction pour récupérer tous les articles
     return render_template('articles.html', titre=titre, articles=articles)
 
-
-from flask import Flask, render_template, abort
 
 
 @app.route('/article/<identifiant>', methods=['GET'])
@@ -181,6 +181,7 @@ def article(identifiant):
         return render_template('404.html'), 404
 
     return render_template('article.html', titre=titre, article=article, prenom=prenom, nom=nom, photo=photo)
+
 
 @app.route('/modifier-article/<identifiant>', methods=['POST'])
 @login_required
@@ -207,7 +208,6 @@ def modifier_article(identifiant):
     return redirect(url_for('article', identifiant=identifiant))
 
 
-
 @app.route('/photo/<id_photo>')
 def photo(id_photo):
     photo_data = get_db().get_photo(id_photo)
@@ -228,7 +228,8 @@ def creation_article():
 
     if request.method == "GET":
         titre_article = titre_article_default
-        return render_template("creation_article.html", titre=titre, titre_article=titre_article, date_publication=format_date,
+        return render_template("creation_article.html", titre=titre, titre_article=titre_article,
+                               date_publication=format_date,
                                contenu="")
     else:
         # Récupérer les données du formulaire
@@ -290,11 +291,13 @@ def utilisateurs():
 def confirmation():
     return render_template('confirmation.html')
 
+
 @app.route('/confirmation_article', methods=['GET'])
 def confirmation_article():
     titre = "Création réussie"
     titre_article = request.args.get('titre_article')
     return render_template('confirmation_article.html', titre=titre, titre_article=titre_article)
+
 
 if __name__ == '__main__':
     app.run()

@@ -11,7 +11,6 @@
                 <a href="{{ url_for('creation_article') }}">
                     <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Créer un article</button>
                 </a>
-                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Secondary</button>
             </div>
         </div>
     </div>
@@ -23,7 +22,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ article[1] }}</h5> <!-- Titre de l'article -->
                             <h6 class="card-subtitle mb-2 text-muted">{{ article[2] }}</h6> <!-- Date de publication -->
-                            <a href="{{ url_for('article', identifiant=article[0]) }}" class="card-link">Lire la suite</a>
+                            <a href="{{ url_for('article', identifiant=article[0]) }}" class="card-link">Modifier</a>
                         </div>
                     </div>
                 </div>
