@@ -92,7 +92,7 @@ class Database():
     def get_user_login_info(self, username):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
-            "select prenom, nom, mdp_hash, mdp_salt, id_photo, id_utilisateur from utilisateurs where username=?"),
+            "select prenom, nom, mdp_hash, mdp_salt, id_photo, id_utilisateur, etat from utilisateurs where username=?"),
             (username,))
         return cursor.fetchone()
 
@@ -104,6 +104,14 @@ class Database():
             return False
         else:
             return True
+
+    def desactiver_utilisateur(self, id_utilisateur):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE utilisateurs SET etat=? WHERE id_utilisateur=?",
+            (0, id_utilisateur)
+        )
+        connection.commit()
 
 
 

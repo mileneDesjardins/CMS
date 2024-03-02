@@ -22,12 +22,18 @@
                             <h5 class="card-title">{{ utilisateur[1] }} {{ utilisateur[2] }}</h5>
                             <p class="card-text my-0">Username: {{ utilisateur[3] }}</p>
                             <p class="card-text">Courriel: {{ utilisateur[4] }}</p>
-                            <a href="/modifier-utilisateur/{{ utilisateur[0] }}" class="btn-primary">
-                                <button type="button" class="btn btn-primary btn-sm">Modifier</button>
-                            </a>
-                            <a href="/desactiver-utilisateur/{{ utilisateur[0] }}" class="btn-primary">
-                                <button type="button" class="btn btn-secondary btn-sm">Désactiver</button>
-                            </a>
+                            {% if utilisateur[8] == 0 %}
+                                <span class="badge bg-danger">Désactivé</span>
+                            {% endif %}
+                            <div style="display: flex; justify-content: space-around;">
+                                <a href="/modifier-utilisateur/{{ utilisateur[0] }}" class="btn-primary">
+                                    <button type="button" class="btn btn-primary btn-sm">Modifier</button>
+                                </a>
+                                <form action="/desactiver-utilisateur/{{ utilisateur[0] }}" method="post">
+                                    <input type="hidden" name="action" value="desactiver">
+                                    <button type="submit" class="btn btn-danger btn-sm">Désactiver</button>
+                                </form>
+                            </div>
                         </div>
 
                     {% endfor %}

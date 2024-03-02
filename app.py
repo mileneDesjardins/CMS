@@ -339,10 +339,33 @@ def modifier_utilisateur(identifiant):
         # Rediriger vers la page de tous les utilisateurs
         return redirect(url_for('utilisateurs'))
 
+
 @app.route('/desactiver-utilisateur/<identifiant>', methods=['GET', 'POST'])
 @login_required
-def desactiver_utilisateur():
-    pass
+def desactiver_utilisateur(identifiant):
+    db = Database()
+
+    if request.method == 'POST':
+        # Vérifier si le bouton de désactivation a été cliqué
+        if request.form.get('action') == 'desactiver':
+            # Récupérer les informations sur l'utilisateur
+            utilisateur = db.get_user_by_id(identifiant)
+            if not utilisateur:
+                return render_template('404.html'), 404
+            # Vérifier si l'utilisateur est actif avant de le désactiver
+            etat_actif = utilisateur[8]  # Supposons que le dernier élément est l'état d'activation
+            if etat_actif:
+                # Désactiver l'utilisateur
+                db.desactiver_utilisateur(identifiant)
+                # Rediriger vers une page de confirmation ou une autre vue
+                return redirect(url_for('utilisateurs'))
+
+    # Récupérer les informations sur l'utilisateur
+    utilisateur = db.get_user_by_id(identifiant)
+    if not utilisateur:
+        return render_template('404.html'), 404
+
+    return render_template('utilisateurs.html', utilisateur=utilisateur)
 
 @app.route('/confirmation', methods=['GET'])
 def confirmation():
