@@ -28,26 +28,26 @@
                 </a>
             </div>
         </div>
-        <div class="overflow-hidden" style="max-height: 60vh; overflow-y: auto;">
-            {% for article in articles %}
-                {% for utilisateur in utilisateurs %}
-                    {#            <div class="container px-5">#}
-                    {#                <img src="/img/files-1614223_1920.jpg" class="img-fluid border rounded-3 shadow-lg mb-4"#}
-                    {#                     alt="Example image" width="700" height="500" loading="lazy">#}
-                    {#            </div>#}
-                    <div class="card" style="width: 18rem;">
-                        <img class="card-img-top" src="..." alt="Card image cap">
-                        <h6 class="card-title">{{ article[2] }}</h6>
-                        <p class="card-text">{{ utilisateur[1] }} {{ utilisateur[2] }}</p>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ article[1] }}</h5>
-
-                            <p class="card-text">{{ article[3] }}</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
+    <h3 class="display-6 my-5">Voici les 5 derniers articles</h3>
+        <div class="overflow-hidden" style="overflow-y: auto;">
+            <div class="row row-cols-1 row-cols-md-5 g-4 justify-content-center">
+                {% for article in articles %}
+                    {% for utilisateur in utilisateurs %}
+                        <div class="col">
+                            <div class="card" style="width: 18rem;">
+                                <img class="card-img-top" src="{{ url_for('photo', id_photo=utilisateur[7]) }}" alt="Card image cap">
+                                <h6 class="card-title">{{ article[2] }}</h6>
+                                <p class="card-text">{{ utilisateur[1] }} {{ utilisateur[2] }}</p>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ article[1] }}</h5>
+                                    <p class="card-text">{{ article[3] }}</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}

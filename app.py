@@ -47,7 +47,9 @@ def accueil():
     utilisateurs = [db.get_user_by_id(id_utilisateur) for id_utilisateur in
                     id_utilisateurs]  # Liste des informations des utilisateurs
 
-    return render_template('index.html', titre=titre, prenom=prenom, nom=nom, articles=articles,
+    photos = [db.get_photo(utilisateur[7]) for utilisateur in utilisateurs]
+
+    return render_template('index.html', titre=titre, prenom=prenom, photos=photos, nom=nom, articles=articles,
                            utilisateurs=utilisateurs)
 
 
