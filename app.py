@@ -37,7 +37,18 @@ def accueil():
     else:
         prenom = None
         nom = None
-    return render_template('index.html', titre=titre, prenom=prenom, nom=nom, photo=photo)
+
+    db = get_db()
+    articles = db.get_cinq_dernier_articles()
+
+    id_utilisateurs = [article[4] for article in
+                       articles]  # Liste des ID utilisateur du cinquième élément de chaque article
+
+    utilisateurs = [db.get_user_by_id(id_utilisateur) for id_utilisateur in
+                    id_utilisateurs]  # Liste des informations des utilisateurs
+
+    return render_template('index.html', titre=titre, prenom=prenom, nom=nom, articles=articles,
+                           utilisateurs=utilisateurs)
 
 
 @app.route('/recherche', methods=['GET', 'POST'])

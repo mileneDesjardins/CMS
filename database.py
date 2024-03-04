@@ -136,6 +136,13 @@ class Database():
                        (id_article,))
         return cursor.fetchone()
 
+    def get_cinq_dernier_articles(self):
+        cursor = self.get_article_connection().cursor()
+        cursor.execute(
+            "SELECT * FROM articles WHERE date_publication <= date('now') ORDER BY date_publication DESC LIMIT 5")
+        return cursor.fetchall()
+
+
     def create_article(self, titre_article, date_publication, contenu, id_utilisateur):
         connection = self.get_article_connection()
         id_article = str(uuid.uuid4())

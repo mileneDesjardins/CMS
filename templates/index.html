@@ -28,11 +28,26 @@
                 </a>
             </div>
         </div>
-        <div class="overflow-hidden" style="max-height: 30vh;">
-            <div class="container px-5">
-                <img src="/img/files-1614223_1920.jpg" class="img-fluid border rounded-3 shadow-lg mb-4"
-                     alt="Example image" width="700" height="500" loading="lazy">
-            </div>
+        <div class="overflow-hidden" style="max-height: 60vh; overflow-y: auto;">
+            {% for article in articles %}
+                {% for utilisateur in utilisateurs %}
+                    {#            <div class="container px-5">#}
+                    {#                <img src="/img/files-1614223_1920.jpg" class="img-fluid border rounded-3 shadow-lg mb-4"#}
+                    {#                     alt="Example image" width="700" height="500" loading="lazy">#}
+                    {#            </div>#}
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="..." alt="Card image cap">
+                        <h6 class="card-title">{{ article[2] }}</h6>
+                        <p class="card-text">{{ utilisateur[1] }} {{ utilisateur[2] }}</p>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ article[1] }}</h5>
+
+                            <p class="card-text">{{ article[3] }}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
