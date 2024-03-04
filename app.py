@@ -41,11 +41,11 @@ def accueil():
     db = get_db()
     articles = db.get_cinq_dernier_articles()
 
-    id_utilisateurs = [article[4] for article in
-                       articles]  # Liste des ID utilisateur du cinquième élément de chaque article
+    # Liste des ID utilisateur des cinq derniers articles
+    id_utilisateurs = [article[4] for article in articles]
 
-    utilisateurs = [db.get_user_by_id(id_utilisateur) for id_utilisateur in
-                    id_utilisateurs]  # Liste des informations des utilisateurs
+    # Liste des informations des utilisateurs correspondant à ces ID
+    utilisateurs = [db.get_user_by_id(id_utilisateur) for id_utilisateur in id_utilisateurs]
 
     photos = [db.get_photo(utilisateur[7]) for utilisateur in utilisateurs]
 
@@ -301,6 +301,16 @@ def creation_article():
 
         # Rediriger vers une page de confirmation avec l'ID de l'article créé
         return redirect(url_for('confirmation_article', titre_article=titre_article, article=article))
+
+
+@app.route('/supprimer-article/<identifiant>', methods=['POST'])
+@login_required
+def supprimer_article(identifiant):
+    if request.method == 'POST':
+        db = get_db()
+        db.delete_article(identifiant)
+        flash('Article supprimé avec succès.', 'success')
+    return redirect(url_for('articles'))
 
 
 @app.route('/utilisateurs', methods=['GET', "POST"])

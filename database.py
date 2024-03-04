@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 import uuid
 
@@ -41,7 +42,6 @@ class Database():
             (id_utilisateur,)
         )
         return cursor.fetchone()
-
 
     def get_all_users(self):
         cursor = self.get_user_connection().cursor()
@@ -88,7 +88,6 @@ class Database():
         )
         connection.commit()
 
-
     def get_user_login_info(self, username):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
@@ -113,8 +112,6 @@ class Database():
         )
         connection.commit()
 
-
-
     ### ARTICLES
     def get_article_connection(self):
         if self.article_connection is None:
@@ -138,20 +135,27 @@ class Database():
 
     def get_cinq_dernier_articles(self):
         cursor = self.get_article_connection().cursor()
+        today = datetime.datetime.now().strftime('%d-%m-%Y-')
         cursor.execute(
-            "SELECT * FROM articles WHERE date_publication <= date('now') ORDER BY date_publication DESC LIMIT 5")
+            "SELECT * FROM articles WHERE date_publication <= ? ORDER BY date_publication DESC LIMIT 5",
+            (today,)
+        )
         return cursor.fetchall()
-
 
     def create_article(self, titre_article, date_publication, contenu, id_utilisateur):
         connection = self.get_article_connection()
-        id_article = str(uuid.uuid4())
+        id_article = str(titre_article)
         connection.execute(
             "INSERT INTO articles (id_article, titre_article, date_publication, contenu, id_utilisateur) VALUES (?, ?, ?, ?, ?)",
             (id_article, titre_article, date_publication, contenu, id_utilisateur)
-            )
+        )
         connection.commit()
         return id_article
+
+    def delete_article(self, id_article):
+        connection = self.get_article_connection()
+        connection.execute("DELETE FROM articles WHERE id_article = ?", (id_article,))
+        connection.commit()
 
     def update_article_titre(self, id_article, nouveau_titre):
         connection = self.get_article_connection()
