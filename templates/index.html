@@ -41,12 +41,13 @@
                                      style="max-width: 100px;">
                             </div>
                             <div class="card-body" style="text-align: left">
-                                <h5 class="card-title">{{ article[2] }}</h5>
+                                <h5 class="card-title">{{ article[2] }}
+                                </h5>
                                 <p class="card-text">{{ utilisateurs[index][1] }} {{ utilisateurs[index][2] }}</p>
-                                <h6 class="card-subtitle mb-2 text-muted">{{ article[1] }}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted"><a
+                                        href="{{ url_for('article', identifiant=article[0]) }}">{{ article[1] }}</a>
+                                </h6>
                                 <p class="card-text text-start">{{ article[3] }}</p>
-                                <!-- Ajout de la classe text-start -->
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
                             </div>
                         </div>
                     </div>
