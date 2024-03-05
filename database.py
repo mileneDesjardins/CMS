@@ -21,17 +21,21 @@ class Database():
         if self.article_connection is not None:
             self.article_connection.close()
 
-    ### UTILISATEURS
+    # UTILISATEURS
     def get_user_connection(self):
         if self.user_connection is None:
             self.user_connection = sqlite3.connect('db/utilisateurs.db')
         return self.user_connection
 
-    def create_user(self, prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo):
+    def create_user(self, prenom, nom, username, courriel, mdp_hash,
+                    mdp_salt, id_photo):
         connection = self.get_user_connection()
         connection.execute(
-            ("insert into utilisateurs(prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo)"
-             " values(?, ?, ?, ?, ?, ?, ?)"), (prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo))
+            (
+                "insert into utilisateurs(prenom, nom, username, courriel, "
+                "mdp_hash, mdp_salt, id_photo)"
+                " values(?, ?, ?, ?, ?, ?, ?)"),
+            (prenom, nom, username, courriel, mdp_hash, mdp_salt, id_photo))
         connection.commit()
 
     def get_user_by_id(self, id_utilisateur):
@@ -91,13 +95,15 @@ class Database():
     def get_user_login_info(self, username):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
-            "select prenom, nom, mdp_hash, mdp_salt, id_photo, id_utilisateur, etat from utilisateurs where username=?"),
+            "select prenom, nom, mdp_hash, mdp_salt, id_photo, "
+            "id_utilisateur, etat from utilisateurs where username=?"),
             (username,))
         return cursor.fetchone()
 
     def user_exists(self, username):
         cursor = self.get_user_connection().cursor()
-        cursor.execute("SELECT * FROM utilisateurs WHERE username LIKE ?", ('%' + username + '%',))
+        cursor.execute("SELECT * FROM utilisateurs WHERE username LIKE ?",
+                       ('%' + username + '%',))
         utilisateur_existe = cursor.fetchall()
         if len(utilisateur_existe) == 0:
             return False
@@ -112,7 +118,7 @@ class Database():
         )
         connection.commit()
 
-    ### ARTICLES
+    # ARTICLES
     def get_article_connection(self):
         if self.article_connection is None:
             self.article_connection = sqlite3.connect('db/articles.db')
@@ -121,10 +127,14 @@ class Database():
     def get_articles(self, recherche_input=None):
         cursor = self.get_article_connection().cursor()
         if recherche_input:
-            cursor.execute("SELECT * FROM articles WHERE titre_article LIKE ? OR contenu LIKE ?",
-                           ('%' + recherche_input + '%', '%' + recherche_input + '%'))
+            cursor.execute(
+                "SELECT * FROM articles WHERE titre_article LIKE ? OR "
+                "contenu LIKE ?",
+                ('%' + recherche_input + '%', '%' + recherche_input + '%'))
         else:
-            cursor.execute("SELECT id_article, titre_article, date_publication, contenu, id_utilisateur FROM articles")
+            cursor.execute(
+                "SELECT id_article, titre_article, date_publication, "
+                "contenu, id_utilisateur FROM articles")
         return cursor.fetchall()
 
     def get_article_by_id(self, id_article):
@@ -137,24 +147,30 @@ class Database():
         cursor = self.get_article_connection().cursor()
         today = datetime.datetime.now().strftime('%d-%m-%Y-')
         cursor.execute(
-            "SELECT * FROM articles WHERE date_publication <= ? ORDER BY date_publication DESC LIMIT 5",
+            "SELECT * FROM articles WHERE date_publication <= ? "
+            "ORDER BY date_publication DESC LIMIT 5",
             (today,)
         )
         return cursor.fetchall()
 
-    def create_article(self, titre_article, date_publication, contenu, id_utilisateur):
+    def create_article(self, titre_article, date_publication, contenu,
+                       id_utilisateur):
         connection = self.get_article_connection()
         id_article = str(titre_article)
         connection.execute(
-            "INSERT INTO articles (id_article, titre_article, date_publication, contenu, id_utilisateur) VALUES (?, ?, ?, ?, ?)",
-            (id_article, titre_article, date_publication, contenu, id_utilisateur)
+            "INSERT INTO articles (id_article, titre_article, "
+            "date_publication, contenu, id_utilisateur) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (id_article, titre_article, date_publication, contenu,
+             id_utilisateur)
         )
         connection.commit()
         return id_article
 
     def delete_article(self, id_article):
         connection = self.get_article_connection()
-        connection.execute("DELETE FROM articles WHERE id_article = ?", (id_article,))
+        connection.execute("DELETE FROM articles WHERE id_article = ?",
+                           (id_article,))
         connection.commit()
 
     def update_article_titre(self, id_article, nouveau_titre):
@@ -173,7 +189,7 @@ class Database():
         )
         connection.commit()
 
-    ### PHOTOS
+    # PHOTOS
     def get_photo_connection(self):
         if self.photo_connection is None:
             self.photo_connection = sqlite3.connect('db/photos.db')
@@ -189,7 +205,8 @@ class Database():
 
     def delete_photo(self, id_photo):
         connection = self.get_photo_connection()
-        connection.execute("DELETE FROM photos WHERE id_photo = ?", (id_photo,))
+        connection.execute("DELETE FROM photos WHERE id_photo = ?",
+                           (id_photo,))
         connection.commit()
 
     def get_photo(self, id_photo):
@@ -201,7 +218,7 @@ class Database():
         else:
             return None
 
-    ### SESSIONS
+    # SESSIONS
     def get_session_connection(self):
         if self.session_connection is None:
             self.session_connection = sqlite3.connect('db/sessions.db')

@@ -4,6 +4,7 @@ from functools import wraps
 from functools import wraps
 from flask import session, render_template
 
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -18,5 +19,5 @@ def login_required(f):
                 redirection = "/connexion-utilisateurs"
             return redirect(redirection, 302)
         return f(*args, **kwargs)
-    return decorated_function
 
+    return decorated_function
