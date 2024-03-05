@@ -25,8 +25,9 @@
         </ul>
         <form action="{{ url_for('recherche') }}" class="d-flex mx-2" method="POST" role="search">
             <label>
-                <input class="form-control me-2" name="recherche_input" placeholder="Entrez un mot clé"
-                       type="search">
+                <input class="form-control me-5" name="recherche_input" placeholder="Entrez un mot clé"
+                       type="search"
+                       title="Pour voir tous les articles, laisser le champ vide et cliquer sur Soumettre.">
             </label>
             <button class="btn btn-outline-success mx-1" type="submit">Soumettre</button>
         </form>
