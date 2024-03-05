@@ -153,6 +153,21 @@ class Database():
         )
         return cursor.fetchall()
 
+    def article_exists(self, id_article):
+        cursor = self.get_article_connection().cursor()
+        cursor.execute(
+            "SELECT COUNT(*) FROM articles WHERE id_article = ?",
+            (id_article,)
+        )
+        decompte = cursor.fetchone()[0]
+        cursor.close()
+
+        # Si nbr de lignes retournées > 0, l'id_article existe déjà
+        if decompte > 0:
+            return True
+        else:
+            return False
+
     def create_article(self, titre_article, date_publication, contenu,
                        id_utilisateur):
         connection = self.get_article_connection()

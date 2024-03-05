@@ -166,7 +166,6 @@ def connexion():
         if mdp_hash == utilisateur[2]:
             # Accès autorisé
             id_session = uuid.uuid4().hex
-            # get_db().save_session(id_session, username)
 
             session["id"] = id_session
             session["id_utilisateur"] = utilisateur[5]
@@ -238,12 +237,7 @@ def modifier_article(identifiant):
                     db.update_article_titre(identifiant, nouveau_titre)
                 if nouveau_contenu:
                     db.update_article_contenu(identifiant, nouveau_contenu)
-                flash('Article modifié avec succès.', 'success')
-            else:
-                flash('Article non trouvé.', 'error')
-        else:
-            flash('Le nouveau titre ou le nouveau contenu est obligatoire.',
-                  'error')
+
     return redirect(url_for('article', identifiant=identifiant))
 
 
@@ -330,6 +324,17 @@ def creation_article():
         # Insérer l'article dans la base de données
         db = Database()
         id_utilisateur = session.get('id_utilisateur')
+
+        # Vérifier si l'id_article est déjà utilisé
+        if db.article_exists(titre_article):
+            erreur = ("Un article avec le même titre existe déjà. Veuillez "
+                      "en choisir un autre.")
+            return render_template("creation_article.html", titre=titre,
+                                   titre_article=titre_article,
+                                   date_publication=date_publication,
+                                   contenu=contenu,
+                                   erreur=erreur)
+
         article = db.create_article(titre_article, date_publication, contenu,
                                     id_utilisateur)
 
