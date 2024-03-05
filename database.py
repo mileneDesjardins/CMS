@@ -121,7 +121,7 @@ class Database():
     def get_articles(self, recherche_input=None):
         cursor = self.get_article_connection().cursor()
         if recherche_input:
-            cursor.execute("SELECT * FROM articles WHERE titre LIKE ? OR contenu LIKE ?",
+            cursor.execute("SELECT * FROM articles WHERE titre_article LIKE ? OR contenu LIKE ?",
                            ('%' + recherche_input + '%', '%' + recherche_input + '%'))
         else:
             cursor.execute("SELECT id_article, titre_article, date_publication, contenu, id_utilisateur FROM articles")

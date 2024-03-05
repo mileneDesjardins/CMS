@@ -2,9 +2,9 @@
 {% block content %}
     <div class="container">
         {% if query %}
-            <h1>Résultats de la recherche pour "{{ query }}"</h1>
+            <h1 class="my-5">Résultats de la recherche pour "{{ query }}"</h1>
         {% else %}
-            <h1>Tous les articles</h1>
+            <h1 class="my-5">Tous les articles</h1>
         {% endif %}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
             {% for article in articles %}
