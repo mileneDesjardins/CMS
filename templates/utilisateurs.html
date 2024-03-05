@@ -11,7 +11,7 @@
         <h1 class="display-5 fw-bold text-body-emphasis text-center">Tous les utilisateurs</h1>
         <div class="d-grid gap-2 my-3 d-sm-flex justify-content-sm-center">
             <a href="{{ url_for('inscription') }}">
-                <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
+                <button type="button" class="btn btn-primary btn-lg px-4">
                     Créer un utilisateur
                 </button>
             </a>
@@ -20,7 +20,7 @@
             <div class="row justify-content-center">
                 {% for utilisateur in batch %}
                     <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="card my-3">
+                        <div class="card my-2">
                             <div class="card-body">
                                 <h5 class="card-title">{{ utilisateur[1] }} {{ utilisateur[2] }}
                                     {% if utilisateur[8] == 0 %}

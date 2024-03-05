@@ -187,6 +187,11 @@ class Database():
         connection.commit()
         return id_photo
 
+    def delete_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        connection.execute("DELETE FROM photos WHERE id_photo = ?", (id_photo,))
+        connection.commit()
+
     def get_photo(self, id_photo):
         cursor = self.get_photo_connection().cursor()
         cursor.execute("SELECT data FROM photos WHERE id_photo=?", (id_photo,))

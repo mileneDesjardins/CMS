@@ -3,8 +3,9 @@
     <div class="container col-xxl-8 px-4 py-5">
         <div class="row flex-lg-row-reverse  g-5 py-5">
             <div class="col-10 col-sm-8 col-lg-6">
-                <img src="{{ url_for('photo', id_photo=utilisateur[7]) }}" class="d-block mx-lg-auto img-fluid"
-                     alt="Bootstrap Themes" width="200px" height="auto" loading="lazy">
+                <img src="{{ url_for('photo', id_photo=utilisateur[7]) }}"
+                     class="d-block mx-lg-auto utilisateur-photo-article img-fluid"
+                     alt="Bootstrap Themes" loading="lazy">
                 <h5 style="text-align: center">{{ utilisateur[1] }} {{ utilisateur[2] }}</h5>
             </div>
             <div class="col-lg-4">
@@ -13,7 +14,9 @@
                 <p class="lead">{{ article[3] }}</p>
                 {% if session.get('id') %}
                     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                        <button type="button" class="btn btn-primary btn-lg px-4 me-md-2" onclick="afficherFormulaire()">Modifier</button>
+                        <button type="button" class="btn btn-primary btn-lg px-4 me-md-2"
+                                onclick="afficherFormulaire()">Modifier
+                        </button>
                         <form action="{{ url_for('supprimer_article', identifiant=article[0]) }}" method="POST">
                             <button type="submit" class="btn btn-danger btn-lg px-4 me-md-2">Supprimer</button>
                         </form>
@@ -23,7 +26,8 @@
                         <form action="{{ url_for('modifier_article', identifiant=article[0]) }}" method="POST">
                             <div class="mb-3">
                                 <label for="nouveauTitre" class="form-label">Nouveau titre :</label>
-                                <input type="text" class="form-control" id="nouveauTitre" name="nouveau_titre" value="{{ article[1] }}">
+                                <input type="text" class="form-control" id="nouveauTitre" name="nouveau_titre"
+                                       value="{{ article[1] }}">
                             </div>
                             <div class="mb-3">
                                 <label for="nouveauContenu" class="form-label">Nouveau contenu :</label>

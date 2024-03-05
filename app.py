@@ -358,9 +358,14 @@ def modifier_utilisateur(identifiant):
         if nouveau_courriel:
             db.update_user_courriel(identifiant, nouveau_courriel)
         if nouvelle_photo:
-            # Stocker la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
-            nouveau_id_photo = db.create_photo(nouvelle_photo.stream.read())
-            db.update_user_photo(identifiant, nouveau_id_photo)
+            # Supprimer l'ancienne photo
+            utilisateur = db.get_user_by_id(identifiant)
+            if utilisateur:
+                ancien_id_photo = utilisateur[7]
+                db.delete_photo(ancien_id_photo)
+                # Stocker la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
+                nouveau_id_photo = db.create_photo(nouvelle_photo.stream.read())
+                db.update_user_photo(identifiant, nouveau_id_photo)
 
         # Rediriger vers la page de tous les utilisateurs
         return redirect(url_for('utilisateurs'))
