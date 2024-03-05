@@ -1,17 +1,21 @@
 {% extends "layout.html" %}
-
 {% block content %}
-    <div class="container my-5">
-        <div class="p-5 text-center bg-body-tertiary rounded-3">
-            <h1 class="text-body-emphasis">Voici les résultats de votre recherche</h1>
-            {% for article in articles %}
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <a href="#" class="card-link"><h5 class="card-title">{{ article.titre }}</h5></a>
-                        <p class="card-text">{{ article.contenu }}</p>
-                    </div>
-                </div>
-            {% endfor %}
+    <div class="container">
+        {% if query %}
+            <h1>Résultats de la recherche pour "{{ query }}"</h1>
+        {% else %}
+            <h1>Tous les articles</h1>
+        {% endif %}
+        <div>
+            {% if articles %}
+                <ul>
+                    {% for article in articles %}
+                        <li><a href="{{ url_for('article', identifiant=article[0]) }}">{{ article[1] }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Aucun résultat trouvé.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
