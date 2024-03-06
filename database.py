@@ -188,6 +188,15 @@ class Database():
                            (id_article,))
         connection.commit()
 
+    def update_id_article_by_nouveau_titre(self, ancien_titre, nouveau_titre):
+        connection = self.get_article_connection()
+        connection.execute(
+            "UPDATE articles SET id_article = ? WHERE titre_article = ?",
+            (nouveau_titre, ancien_titre)
+        )
+        connection.commit()
+
+
     def update_article_titre(self, id_article, nouveau_titre):
         connection = self.get_article_connection()
         connection.execute(

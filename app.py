@@ -223,6 +223,9 @@ def article(identifiant):
 @app.route('/modifier-article/<identifiant>', methods=['POST'])
 @login_required
 def modifier_article(identifiant):
+    global nouveau_titre
+    erreur = None
+
     if request.method == 'POST':
         nouveau_titre = request.form.get('nouveau_titre')
         nouveau_contenu = request.form.get('nouveau_contenu')
@@ -234,11 +237,19 @@ def modifier_article(identifiant):
             article = db.get_article_by_id(identifiant)
             if article:
                 if nouveau_titre:
-                    db.update_article_titre(identifiant, nouveau_titre)
+                    # Vérifier si le nouveau titre existe déjà
+                    if db.article_exists(nouveau_titre):
+                        erreur = "Un article avec le même titre existe déjà. Veuillez entrer un autre titre."
+                    else:
+                        # Mettre à jour le titre de l'article
+                        db.update_article_titre(identifiant, nouveau_titre)
+                        # Mettre à jour l'ID de l'article avec le nouveau titre
+                        db.update_id_article_by_nouveau_titre(nouveau_titre,
+                                                              nouveau_titre)
                 if nouveau_contenu:
                     db.update_article_contenu(identifiant, nouveau_contenu)
-
-    return redirect(url_for('article', identifiant=identifiant))
+    # Si aucune erreur, rediriger vers la page de l'article après la modification
+    return redirect(url_for('article', identifiant=nouveau_titre, erreur=erreur))
 
 
 @app.route('/photo/<id_photo>')

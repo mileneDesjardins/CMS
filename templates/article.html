@@ -14,28 +14,43 @@
                 <p class="lead">{{ article[3]|safe }}</p>
                 {% if session.get('id') %}
                     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                        <button type="button" class="btn btn-primary btn-lg px-4 me-md-2"
+                        <button type="button"
+                                class="btn btn-primary px-4 me-md-2"
                                 onclick="afficherFormulaire()">Modifier
                         </button>
-                        <form action="{{ url_for('supprimer_article', identifiant=article[0]) }}" method="POST">
-                            <button type="submit" class="btn btn-danger btn-lg px-4 me-md-2">Supprimer</button>
+                        <form action="{{ url_for('supprimer_article', identifiant=article[0]) }}"
+                              method="POST">
+                            <button type="submit"
+                                    class="btn btn-danger px-4 me-md-2 ">
+                                Supprimer
+                            </button>
                         </form>
                     </div>
 
                     <div id="formModification" style="display: none;">
-                        <form action="{{ url_for('modifier_article', identifiant=article[0]) }}" method="POST">
+                        <div id="erreur" class="alert alert-danger"
+                             role="alert" style="display: none;"></div>
+                        <form action="{{ url_for('modifier_article', identifiant=article[0]) }}"
+                              method="POST" onsubmit="return verifierErreur()">
+                            <button type="submit" class="btn btn-success my-3">
+                                Enregistrer les modifications
+                            </button>
                             <div class="mb-3">
-                                <label for="nouveauTitre" class="form-label">Nouveau titre :</label>
-                                <input type="text" class="form-control" id="nouveauTitre" name="nouveau_titre"
+                                <label for="nouveauTitre" class="form-label">Nouveau
+                                    titre :</label>
+                                <input type="text" class="form-control"
+                                       id="nouveauTitre" name="nouveau_titre"
                                        value="{{ article[1] }}">
                             </div>
                             <div class="mb-3">
-                                <label for="nouveauContenu" class="form-label">Nouveau contenu :</label>
-                                <textarea class="form-control" id="nouveauContenu" rows="15"
+                                <label for="nouveauContenu" class="form-label">Nouveau
+                                    contenu :</label>
+                                <textarea class="form-control"
+                                          id="nouveauContenu" rows="15"
                                           name="nouveau_contenu">{{ article[3] }}</textarea>
                             </div>
-                            <input type="hidden" name="id_article" value="{{ article[2] }}">
-                            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                            <input type="hidden" name="id_article"
+                                   value="{{ article[2] }}">
                         </form>
                     </div>
                 {% endif %}
@@ -45,11 +60,19 @@
     <script>
         function afficherFormulaire() {
             var formulaire = document.getElementById('formModification');
-            if (formulaire.style.display === 'none') {
-                formulaire.style.display = 'block';
-            } else {
-                formulaire.style.display = 'none';
+            formulaire.style.display = 'block';
+        }
+
+        function verifierErreur() {
+            var erreurDiv = document.getElementById('erreur');
+            var nouveauTitre = document.getElementById('nouveauTitre').value;
+            if (nouveauTitre.trim() === "") {
+                erreurDiv.innerHTML = "Un article avec le même titre existe " +
+                    "déjà. Veuillez entrer un autre titre.";
+                erreurDiv.style.display = 'block';
+                return false;
             }
+            return true;
         }
     </script>
 {% endblock %}
