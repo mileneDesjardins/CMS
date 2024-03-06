@@ -207,6 +207,7 @@ def articles():
 @app.route('/article/<identifiant>', methods=['GET'])
 def article(identifiant):
     titre = "Article"
+    erreur = request.args.get('erreur')
 
     db = get_db()
     article = db.get_article_by_id(
@@ -215,9 +216,10 @@ def article(identifiant):
     if article is None:
         return render_template('404.html'), 404
 
+
     utilisateur = db.get_user_by_id(article[4])
     return render_template('article.html', titre=titre, article=article,
-                           utilisateur=utilisateur, photo=photo)
+                           utilisateur=utilisateur, photo=photo, erreur=erreur)
 
 
 @app.route('/modifier-article/<identifiant>', methods=['POST'])
@@ -240,16 +242,17 @@ def modifier_article(identifiant):
                     # Vérifier si le nouveau titre existe déjà
                     if db.article_exists(nouveau_titre):
                         erreur = "Un article avec le même titre existe déjà. Veuillez entrer un autre titre."
+                        return redirect(
+                            url_for('article', identifiant=identifiant,
+                                    erreur=erreur))
                     else:
                         # Mettre à jour le titre de l'article
-                        db.update_article_titre(identifiant, nouveau_titre)
-                        # Mettre à jour l'ID de l'article avec le nouveau titre
-                        db.update_id_article_by_nouveau_titre(nouveau_titre,
-                                                              nouveau_titre)
+                        identifiant = db.update_article_titre(identifiant, nouveau_titre)
+
                 if nouveau_contenu:
                     db.update_article_contenu(identifiant, nouveau_contenu)
     # Si aucune erreur, rediriger vers la page de l'article après la modification
-    return redirect(url_for('article', identifiant=nouveau_titre, erreur=erreur))
+    return redirect(url_for('article', identifiant=identifiant, erreur=erreur))
 
 
 @app.route('/photo/<id_photo>')
@@ -282,6 +285,8 @@ def creation_article():
                                date_publication=format_date,
                                contenu="", erreur="")
     else:
+        erreur = None
+
         # Récupérer les données du formulaire
         titre_article = request.form.get('titre_article')
         date_publication = request.form.get('date_publication')
@@ -290,47 +295,29 @@ def creation_article():
         # Vérifier si l'un des champs est vide
         if not titre_article or not date_publication or not contenu:
             erreur = "Veuillez remplir tous les champs."
-            return render_template("creation_article.html", titre=titre,
-                                   titre_article=titre_article,
-                                   date_publication=date_publication,
-                                   contenu=contenu, erreur=erreur)
 
         # Vérifier si le titre a au moins 3 caractères
         if len(titre_article) < 3:
             erreur = "Le titre doit avoir au moins 3 caractères."
-            return render_template("creation_article.html", titre=titre,
-                                   titre_article=titre_article,
-                                   date_publication=date_publication,
-                                   contenu=contenu,
-                                   erreur=erreur)
 
         # Vérifier si le champ titre dépasse 100 caractères
         if len(titre_article) > 100:
             erreur = "Le titre ne doit pas dépasser 100 caractères."
-            return render_template("creation_article.html", titre=titre,
-                                   titre_article=titre_article,
-                                   date_publication=date_publication,
-                                   contenu=contenu,
-                                   erreur=erreur)
 
         # Vérifier si le format de la date est valide
         if not re.match(r'^\d{2}-\d{2}-\d{4}$', date_publication):
             erreur = ("Le format de la date de publication n'est pas valide. "
                       "Utilisez le format DD-MM-YYYY.")
-            return render_template("creation_article.html", titre=titre,
-                                   titre_article=titre_article,
-                                   date_publication=date_publication,
-                                   contenu=contenu,
-                                   erreur=erreur)
 
         # Vérifier si le contenu a au moins 15 caractères
         if len(contenu) < 15:
             erreur = "Le contenu doit avoir au moins 15 caractères."
+
+        if erreur != None:
             return render_template("creation_article.html", titre=titre,
                                    titre_article=titre_article,
                                    date_publication=date_publication,
-                                   contenu=contenu,
-                                   erreur=erreur)
+                                   contenu=contenu, erreur=erreur)
 
         # Insérer l'article dans la base de données
         db = Database()

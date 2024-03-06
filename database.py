@@ -1,6 +1,8 @@
 import datetime
 import sqlite3
 import uuid
+import re
+import unicodedata
 
 
 class Database():
@@ -153,8 +155,9 @@ class Database():
         )
         return cursor.fetchall()
 
-    def article_exists(self, id_article):
+    def article_exists(self, titre_article):
         cursor = self.get_article_connection().cursor()
+        id_article = self.create_slug(titre_article)
         cursor.execute(
             "SELECT COUNT(*) FROM articles WHERE id_article = ?",
             (id_article,)
@@ -163,15 +166,12 @@ class Database():
         cursor.close()
 
         # Si nbr de lignes retournées > 0, l'id_article existe déjà
-        if decompte > 0:
-            return True
-        else:
-            return False
+        return decompte > 0
 
     def create_article(self, titre_article, date_publication, contenu,
                        id_utilisateur):
         connection = self.get_article_connection()
-        id_article = str(titre_article)
+        id_article = self.create_slug(titre_article)
         connection.execute(
             "INSERT INTO articles (id_article, titre_article, "
             "date_publication, contenu, id_utilisateur) "
@@ -188,22 +188,15 @@ class Database():
                            (id_article,))
         connection.commit()
 
-    def update_id_article_by_nouveau_titre(self, ancien_titre, nouveau_titre):
-        connection = self.get_article_connection()
-        connection.execute(
-            "UPDATE articles SET id_article = ? WHERE titre_article = ?",
-            (nouveau_titre, ancien_titre)
-        )
-        connection.commit()
-
-
     def update_article_titre(self, id_article, nouveau_titre):
         connection = self.get_article_connection()
+        nouveau_id_article = self.create_slug(nouveau_titre)
         connection.execute(
-            "UPDATE articles SET titre_article = ? WHERE id_article = ?",
-            (nouveau_titre, id_article)
+            "UPDATE articles SET id_article = ?, titre_article = ? WHERE id_article = ?",
+            (nouveau_id_article, nouveau_titre, id_article)
         )
         connection.commit()
+        return nouveau_id_article
 
     def update_article_contenu(self, id_article, nouveau_contenu):
         connection = self.get_article_connection()
@@ -270,3 +263,12 @@ class Database():
         connection.execute(("delete from sessions where id_session=?"),
                            (id_session,))
         connection.commit()
+
+    def create_slug(self, titre_article):
+        s = titre_article.lower().strip()
+        s = unicodedata.normalize('NFD', s) \
+            .encode('ascii', 'ignore') \
+            .decode("utf-8")
+        s = re.sub(r"[^\w\s]", '', s)
+        s = re.sub(r"\s+", '-', s)
+        return s
