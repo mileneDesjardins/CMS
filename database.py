@@ -3,9 +3,16 @@ import sqlite3
 import uuid
 import re
 import unicodedata
+from flask import g
 
 
 class Database():
+    @staticmethod
+    def get_db():
+        database = getattr(g, '_database', None)
+        if database is None:
+            g._database = Database()
+        return g._database
 
     def __init__(self):
         self.user_connection = None
