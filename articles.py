@@ -58,7 +58,8 @@ def modifier_article(identifiant):
                 if nouveau_titre:
                     # Vérifier si le nouveau titre existe déjà
                     if db.article_exists(nouveau_titre):
-                        erreur = "Un article avec le même titre existe déjà. Veuillez entrer un autre titre."
+                        erreur = ("Un article avec le même titre existe déjà. "
+                                  "Veuillez entrer un autre titre.")
                         return redirect(
                             url_for('article', identifiant=identifiant,
                                     erreur=erreur))
@@ -69,7 +70,7 @@ def modifier_article(identifiant):
 
                 if nouveau_contenu:
                     db.update_article_contenu(identifiant, nouveau_contenu)
-    # Si aucune erreur, rediriger vers la page de l'article après la modification
+
     return redirect(url_for('article', identifiant=identifiant, erreur=erreur))
 
 
@@ -115,8 +116,9 @@ def creation_article():
         if len(contenu) < 15:
             erreur = "Le contenu doit avoir au moins 15 caractères."
 
-        if erreur != None:
-            return render_template("creation_article.html", titre=titre,
+        if erreur is not None:
+            return render_template("creation_article.html",
+                                   titre=titre,
                                    titre_article=titre_article,
                                    date_publication=date_publication,
                                    contenu=contenu, erreur=erreur)

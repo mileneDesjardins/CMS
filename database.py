@@ -199,7 +199,8 @@ class Database():
         connection = self.get_article_connection()
         nouveau_id_article = self.create_slug(nouveau_titre)
         connection.execute(
-            "UPDATE articles SET id_article = ?, titre_article = ? WHERE id_article = ?",
+            "UPDATE articles SET id_article = ?, titre_article = ? "
+            "WHERE id_article = ?",
             (nouveau_id_article, nouveau_titre, id_article)
         )
         connection.commit()

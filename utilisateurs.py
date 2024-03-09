@@ -11,7 +11,6 @@ from app import app
 @app.route('/creation_utilisateur', methods=['GET', 'POST'])
 def inscription():
     titre = 'Creation utilisateur'
-    
     if request.method == "GET":
         return render_template("creation_utilisateur.html", titre=titre)
     else:

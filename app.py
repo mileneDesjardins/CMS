@@ -6,14 +6,15 @@ from flask import Flask, render_template, g, session, \
 from authorization_decorator import login_required
 from database import Database
 
+
 load_dotenv()
 app = Flask(__name__, static_url_path='', static_folder='static')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-import articles
-import utilisateurs
-import recherche
-import confirmation
+import articles  # noqa: E402
+import utilisateurs  # noqa: E402
+import recherche  # noqa: E402
+import confirmation  # noqa: E402
 
 
 @app.teardown_appcontext

@@ -19,6 +19,7 @@ def recherche():
 @app.route('/resultats/<query>', methods=['GET'])
 @app.route('/resultats/', defaults={'query': None}, methods=['GET'])
 def resultats(query):
+    titre="Résultats"
     if query:
         # Effectuer la recherche en fonction du terme de recherche (query) et
         # récupérer les articles correspondants
@@ -30,4 +31,5 @@ def resultats(query):
         db = Database.get_db()
         articles = db.get_articles()
 
-    return render_template('resultats.html', query=query, articles=articles)
+    return render_template('resultats.html', query=query, articles=articles,
+                           titre=titre)

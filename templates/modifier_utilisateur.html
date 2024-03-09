@@ -43,7 +43,9 @@
                     <label for="photo" class="form-label">Photo actuelle</label>
                     <div class="col">
 
-                        <img src="{{ url_for('photo', id_photo=utilisateur[7]) }}" class="img-thumbnail"
+                        <img src="{{ url_for('photo',
+                        id_photo=utilisateur[7]) }}" class="img-thumbnail"
+                             alt="photo profil"
                              style="max-width: 200px;">
                         <div class="input-group">
                             <input type="text" id="photo" class="form-control" value="{{ utilisateur[7] }}" disabled>
