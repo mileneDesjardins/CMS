@@ -4,7 +4,8 @@ from app import app
 
 @app.route('/confirmation_utilisateur', methods=['GET'])
 def confirmation():
-    return render_template('confirmation_utilisateur.html')
+    titre = 'Création réussie'
+    return render_template('confirmation_utilisateur.html', titre=titre)
 
 
 @app.route('/confirmation_article', methods=['GET'])
