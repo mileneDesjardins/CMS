@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+import datetime
 
 from flask import render_template, redirect, url_for, request, session
 
@@ -76,11 +76,10 @@ def modifier_article(identifiant):
 @app.route('/creation-article', methods=['GET', 'POST'])
 @login_required
 def creation_article():
+    titre = 'Création article'
     date_publication = datetime.date.today()
     # Formater la date au format DD-MM-YYYY
     format_date = date_publication.strftime("%d-%m-%Y")
-
-    titre = 'Création article'
 
     if request.method == "GET":
         return render_template("creation_article.html", titre=titre,

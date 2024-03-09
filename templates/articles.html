@@ -2,18 +2,20 @@
 {% block content %}
     <div class="container">
         <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; margin-top: 3%; margin-bottom: 1%;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" fill="currentColor"
+            <svg xmlns="http://www.w3.org/2000/svg" width="100px"
+                 height="100px" fill="currentColor"
                  class="bi bi-archive"
                  viewBox="0 0 16 16">
                 <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"></path>
             </svg>
         </div>
-        <h1 class="display-5 fw-bold text-body-emphasis text-center">Tous les articles</h1>
+        <h1 class="display-5 fw-bold text-body-emphasis text-center">Tous les
+            articles</h1>
         <div class="col-lg-6 mx-auto">
             <div class="d-grid gap-2 my-3 d-sm-flex justify-content-sm-center">
-                <a href="{{ url_for('creation_article') }}">
-                    <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Créer un article</button>
-                </a>
+                <a href="{{ url_for('creation_article') }}"
+                   class="btn btn-primary btn-lg px-4 gap-3">Créer un
+                    article</a>
             </div>
         </div>
         <div class="container">
@@ -22,7 +24,8 @@
                     <div class="col mb-4">
                         <div class="card h-100 ">
                             <div class="card-body">
-                                <a href="{{ url_for('article', identifiant=article[0]) }}" class="card-link">
+                                <a href="{{ url_for('article', identifiant=article[0]) }}"
+                                   class="card-link">
                                     <h5 class="card-title">{{ article[1] }}</h5>
                                 </a>
                                 <h6 class="card-subtitle mb-2 text-muted">{{ article[2] }}</h6>
