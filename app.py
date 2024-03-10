@@ -69,13 +69,13 @@ def admin():
     return redirect(url_for('articles'))
 
 
-@app.route('/admin-nouveau', methods=['GET', 'POST'])
+@app.route('/admin-nouveau', methods=['GET'])
 @login_required
 def admin_nouveau():
     return redirect(url_for('creation_article'))
 
 
-@app.route('/utilisateurs', methods=['GET', "POST"])
+@app.route('/utilisateurs', methods=['GET'])
 @login_required
 def utilisateurs():
     titre = 'Utilisateurs'

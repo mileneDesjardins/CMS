@@ -79,7 +79,6 @@ def modifier_article(identifiant):
 def creation_article():
     titre = 'Création article'
     date_publication = datetime.date.today()
-    # Formater la date au format DD-MM-YYYY
     format_date = date_publication.strftime("%d-%m-%Y")
 
     if request.method == "GET":
@@ -89,41 +88,16 @@ def creation_article():
                                contenu="", erreur="")
     else:
         erreur = None
-
-        # Récupérer les données du formulaire
         titre_article = request.form.get('titre_article')
         date_publication = request.form.get('date_publication')
         contenu = request.form.get('contenu')
-
-        # Vérifier si l'un des champs est vide
-        if not titre_article or not date_publication or not contenu:
-            erreur = "Veuillez remplir tous les champs."
-
-        # Vérifier si le titre a au moins 3 caractères
-        if len(titre_article) < 3:
-            erreur = "Le titre doit avoir au moins 3 caractères."
-
-        # Vérifier si le champ titre dépasse 100 caractères
-        if len(titre_article) > 100:
-            erreur = "Le titre ne doit pas dépasser 100 caractères."
-
-        # Vérifier si le format de la date est valide
-        if not re.match(r'^\d{2}-\d{2}-\d{4}$', date_publication):
-            erreur = ("Le format de la date de publication n'est pas valide. "
-                      "Utilisez le format DD-MM-YYYY.")
-
-        # Vérifier si le contenu a au moins 15 caractères
-        if len(contenu) < 15:
-            erreur = "Le contenu doit avoir au moins 15 caractères."
-
+        erreur = est_invalide(contenu, date_publication, erreur, titre_article)
         if erreur is not None:
             return render_template("creation_article.html",
                                    titre=titre,
                                    titre_article=titre_article,
                                    date_publication=date_publication,
                                    contenu=contenu, erreur=erreur)
-
-        # Insérer l'article dans la base de données
         db = Database()
         id_utilisateur = session.get('id_utilisateur')
 
@@ -136,14 +110,35 @@ def creation_article():
                                    date_publication=date_publication,
                                    contenu=contenu,
                                    erreur=erreur)
-
+        # Creer l'article dans la base de données
         article = db.create_article(titre_article, date_publication, contenu,
                                     id_utilisateur)
-
-        # Rediriger vers une page de confirmation avec l'ID de l'article créé
         return redirect(
             url_for('confirmation_article', titre_article=titre_article,
                     article=article))
+
+
+def est_invalide(contenu, date_publication, erreur, titre_article):
+    # Vérifier si l'un des champs est vide
+    if not titre_article or not date_publication or not contenu:
+        erreur = "Veuillez remplir tous les champs."
+    # Vérifier si le titre a au moins 3 caractères
+    if len(titre_article) < 3:
+        erreur = "Le titre doit avoir au moins 3 caractères."
+    # Vérifier si le champ titre dépasse 100 caractères
+    if len(titre_article) > 100:
+        erreur = "Le titre ne doit pas dépasser 100 caractères."
+    # Vérifier si le format de la date est valide
+    if not re.match(r'^\d{2}-\d{2}-\d{4}$', date_publication):
+        erreur = ("Le format de la date de publication n'est pas valide. "
+                  "Utilisez le format DD-MM-YYYY.")
+    # Vérifier si le contenu a au moins 15 caractères
+    if len(contenu) < 15:
+        erreur = "Le contenu doit avoir au moins 15 caractères."
+    # Vérifier si le contenu a moins de 100 caractères
+    if len(contenu) > 100:
+        erreur = "Le contenu doit avoir moins de 100 caractères."
+    return erreur
 
 
 @app.route('/supprimer-article/<identifiant>', methods=['POST'])
