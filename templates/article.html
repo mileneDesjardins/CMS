@@ -30,7 +30,7 @@
                     <div id="formModification"
                          class="{{ 'd-none' if not erreur }}">
                         {% if erreur %}
-                            <div id="erreur" class="alert alert-danger"
+                            <div id="erreur" class="alert alert-danger my-2"
                                  role="alert">{{ erreur }}</div>
                         {% endif %}
                         <form action="{{ url_for('modifier_article', identifiant=article[0]) }}"

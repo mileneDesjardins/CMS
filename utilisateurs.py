@@ -58,7 +58,7 @@ def connexion():
     elif request.path == "/connexion-admin":
         redirection = "/articles"
     elif request.path == "/connexion-admin-nouveau":
-        redirection = "/creation_article"
+        redirection = "/creation-article"
     elif request.path == "/connexion-utilisateurs":
         redirection = "/utilisateurs"
 
@@ -107,16 +107,6 @@ def connexion():
 def deconnexion():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
-
-
-@app.route('/utilisateurs', methods=['GET', "POST"])
-@login_required
-def utilisateurs():
-    titre = 'Utilisateurs'
-    db = Database()
-    utilisateurs = db.get_all_users()
-    return render_template('utilisateurs.html', titre=titre,
-                           utilisateurs=utilisateurs)
 
 
 @app.route('/modifier-utilisateur/<identifiant>', methods=['GET', 'POST'])

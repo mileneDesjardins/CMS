@@ -6,7 +6,6 @@ from flask import Flask, render_template, g, session, \
 from authorization_decorator import login_required
 from database import Database
 
-
 load_dotenv()
 app = Flask(__name__, static_url_path='', static_folder='static')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -74,6 +73,16 @@ def admin():
 @login_required
 def admin_nouveau():
     return redirect(url_for('creation_article'))
+
+
+@app.route('/utilisateurs', methods=['GET', "POST"])
+@login_required
+def utilisateurs():
+    titre = 'Utilisateurs'
+    db = Database()
+    utilisateurs = db.get_all_users()
+    return render_template('utilisateurs.html', titre=titre,
+                           utilisateurs=utilisateurs)
 
 
 if __name__ == '__main__':

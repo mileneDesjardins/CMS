@@ -2,7 +2,8 @@
 {% block content %}
 
     <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; margin-top: 3%; margin-bottom: 1%;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" fill="currentColor" class="bi bi-newspaper"
+        <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px"
+             fill="currentColor" class="bi bi-newspaper"
              viewBox="0 0 16 16">
             <path d="M0 2.5A1.5 1.5 0 0 1 1.5 1h11A1.5 1.5 0 0 1 14 2.5v10.528c0 .3-.05.654-.238.972h.738a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 1 1 0v9a1.5 1.5 0 0 1-1.5 1.5H1.497A1.497 1.497 0 0 1 0 13.5zM12 14c.37 0 .654-.211.853-.441.092-.106.147-.279.147-.531V2.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5v11c0 .278.223.5.497.5z"></path>
             <path d="M2 3h10v2H2zm0 3h4v3H2zm0 4h4v1H2zm0 2h4v1H2zm5-6h2v1H7zm3 0h2v1h-2zM7 8h2v1H7zm3 0h2v1h-2zm-3 2h2v1H7zm3 0h2v1h-2zm-3 2h2v1H7zm3 0h2v1h-2z"></path>
@@ -15,20 +16,24 @@
             <div class="container" style="max-width: 40%; text-align: center;">
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="text" name="titre_article" class="form-control" placeholder="Titre"
-                               aria-label="titre_article" value="{{ titre_article }}">
+                        <input type="text" name="titre_article"
+                               class="form-control" placeholder="Titre"
+                               aria-label="titre_article"
+                               value="{{ titre_article }}">
                     </div>
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="text" name="date_publication" class="form-control" placeholder="Date"
+                        <input type="text" name="date_publication"
+                               class="form-control" placeholder="Date"
                                aria-label="date"
                                value="{{ date_publication }}">
                     </div>
                 </div>
                 <div class=" row g-3 py-1">
                     <div class="col">
-                        <textarea name="contenu" class="form-control" placeholder="Contenu" aria-label="contenu"
+                        <textarea name="contenu" class="form-control"
+                                  placeholder="Contenu" aria-label="contenu"
                                   rows="15">{{ contenu }}</textarea>
                     </div>
                 </div>
@@ -37,7 +42,9 @@
                         {{ erreur }}
                     </div>
                 {% endif %}
-                <button type="submit" class="btn btn-primary my-4">Créer un article</button>
+                <button type="submit" class="btn btn-primary my-4">Créer un
+                    article
+                </button>
             </div>
         </div>
     </form>
