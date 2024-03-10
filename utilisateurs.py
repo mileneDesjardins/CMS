@@ -156,6 +156,12 @@ def modifier_utilisateur(identifiant):
         (nouveau_courriel, nouveau_nom, nouveau_prenom, nouveau_username,
          nouvelle_photo) = obtenir_nouvelles_infos_utilisateur()
 
+        if not nouveau_prenom or not nouveau_nom or not nouveau_username or not nouveau_courriel:
+            utilisateur = db.get_user_by_id(identifiant)
+            return render_template('modifier_utilisateur.html', titre=titre,
+                                   utilisateur=utilisateur,
+                                   erreur="Tous les champs sont obligatoires.")
+
         mettre_a_jour_donnees(db, identifiant, nouveau_courriel, nouveau_nom,
                               nouveau_prenom, nouveau_username, nouvelle_photo)
 
