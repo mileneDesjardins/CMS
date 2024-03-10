@@ -154,20 +154,20 @@ def est_invalide(contenu, date_publication, erreur, titre_article):
         erreur = "Veuillez remplir tous les champs."
     # Vérifier si le titre a au moins 3 caractères
     if len(titre_article) < 3:
-        erreur = "Le titre doit avoir au moins 3 caractères."
+        erreur = "Le titre doit avoir au moins 3 lettres."
     # Vérifier si le champ titre dépasse 100 caractères
     if len(titre_article) > 100:
-        erreur = "Le titre doit avoir moins de 100 caractères."
+        erreur = "Le titre doit avoir moins de 100 lettres."
     # Vérifier si le format de la date est valide
     if not re.match(r'^\d{2}-\d{2}-\d{4}$', date_publication):
         erreur = ("Le format de la date de publication n'est pas valide. "
                   "Utilisez le format DD-MM-YYYY.")
-    # Vérifier si le contenu a au moins 15 caractères
-    if len(contenu) < 15:
-        erreur = "Le contenu doit avoir au moins 15 caractères."
-    # Vérifier si le contenu a moins de 100 caractères
-    if len(contenu) > 150:
-        erreur = "Le contenu doit avoir moins de 150 caractères."
+    # Vérifier si le contenu a au moins 15 mots
+    if len(contenu.split()) < 30:
+        erreur = "Le contenu doit avoir au moins 15 mots."
+    # Vérifier si le contenu a plus de 200 mots
+    if len(contenu.split()) > 200:
+        erreur = "Le contenu doit avoir moins de 200 mots."
     return erreur
 
 
