@@ -71,8 +71,8 @@ def modifier_article(identifiant):
                                         erreur=erreur))
                         else:
                             # Mettre à jour le titre de l'article
-                            identifiant = db.update_article_titre(identifiant,
-                                                                  nouveau_titre)
+                            identifiant = db.update_article_titre(
+                                identifiant, nouveau_titre)
 
                 if nouveau_contenu:
                     db.update_article_contenu(identifiant, nouveau_contenu)
@@ -112,14 +112,12 @@ def creation_article():
         article = db.create_article(titre_article, date_publication, contenu,
                                     id_utilisateur)
 
-        # Vérifier à nouveau la validité des champs après la création de l'article
         erreur = est_invalide(contenu, date_publication, erreur, titre_article)
 
         if erreur is not None:
             return afficher(contenu, date_publication, erreur, titre,
                             titre_article)
 
-        # Si les champs sont valides après la création de l'article, rediriger vers la confirmation
         return redirect(
             url_for('confirmation_article', titre_article=titre_article,
                     article=article))
