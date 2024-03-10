@@ -15,7 +15,7 @@ def creer_utilisateur():
         return render_template("creation_utilisateur.html", titre=titre)
     else:
         courriel, mdp, nom, photo_data, prenom, username = (
-            obtenir_infos_utilisateur())
+            obtenir_infos())
 
         # Vérifier que les champs ne sont pas vides
         if prenom == "" or nom == "" or courriel == "" or mdp == "" or len(
@@ -39,7 +39,7 @@ def creer_utilisateur():
         return redirect('/confirmation_utilisateur', 302)
 
 
-def obtenir_infos_utilisateur():
+def obtenir_infos():
     prenom = request.form['prenom']
     nom = request.form['nom']
     username = request.form["username"]

@@ -92,30 +92,41 @@ def creation_article():
         date_publication = request.form.get('date_publication')
         contenu = request.form.get('contenu')
         erreur = est_invalide(contenu, date_publication, erreur, titre_article)
+
         if erreur is not None:
-            return render_template("creation_article.html",
-                                   titre=titre,
-                                   titre_article=titre_article,
-                                   date_publication=date_publication,
-                                   contenu=contenu, erreur=erreur)
+            return afficher(contenu, date_publication, erreur, titre,
+                            titre_article)
+
         db = Database()
         id_utilisateur = session.get('id_utilisateur')
 
         # Vérifier si l'id_article est déjà utilisé
         if db.article_exists(titre_article):
-            erreur = ("Un article avec le même titre existe déjà. Veuillez "
-                      "en choisir un autre.")
-            return render_template("creation_article.html", titre=titre,
-                                   titre_article=titre_article,
-                                   date_publication=date_publication,
-                                   contenu=contenu,
-                                   erreur=erreur)
+            return existe_deja(contenu, date_publication, titre, titre_article)
         # Creer l'article dans la base de données
         article = db.create_article(titre_article, date_publication, contenu,
                                     id_utilisateur)
         return redirect(
             url_for('confirmation_article', titre_article=titre_article,
                     article=article))
+
+
+def afficher(contenu, date_publication, erreur, titre, titre_article):
+    return render_template("creation_article.html",
+                           titre=titre,
+                           titre_article=titre_article,
+                           date_publication=date_publication,
+                           contenu=contenu, erreur=erreur)
+
+
+def existe_deja(contenu, date_publication, titre, titre_article):
+    erreur = ("Un article avec le même titre existe déjà. Veuillez "
+              "en choisir un autre.")
+    return render_template("creation_article.html", titre=titre,
+                           titre_article=titre_article,
+                           date_publication=date_publication,
+                           contenu=contenu,
+                           erreur=erreur)
 
 
 def est_invalide(contenu, date_publication, erreur, titre_article):
