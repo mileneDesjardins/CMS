@@ -24,15 +24,16 @@ def article(identifiant):
     erreur = request.args.get('erreur')
 
     db = Database.get_db()
-    article = db.get_article_by_id(
-        identifiant)  # Récupérer un article par son ID
-    photo = db.get_photo(article[4])
+    article = db.get_article_by_id(identifiant)
 
     if article is None:
         return render_template('404.html'), 404
 
     utilisateur = db.get_user_by_id(article[4])
-    return render_template('article.html', titre=titre, article=article,
+    photo = db.get_photo(utilisateur[7])
+
+    return render_template('article.html', titre=titre,
+                           article=article,
                            utilisateur=utilisateur, photo=photo, erreur=erreur)
 
 
@@ -88,9 +89,8 @@ def creation_article():
                                contenu="", erreur="")
     else:
         erreur = None
-        titre_article = request.form.get('titre_article')
-        date_publication = request.form.get('date_publication')
-        contenu = request.form.get('contenu')
+        contenu, date_publication, titre_article = obtenir_infos_articles(
+            date_publication)
         erreur = est_invalide(contenu, date_publication, erreur, titre_article)
 
         if erreur is not None:
@@ -109,6 +109,13 @@ def creation_article():
         return redirect(
             url_for('confirmation_article', titre_article=titre_article,
                     article=article))
+
+
+def obtenir_infos_articles(date_publication):
+    titre_article = request.form.get('titre_article')
+    date_publication = request.form.get('date_publication')
+    contenu = request.form.get('contenu')
+    return contenu, date_publication, titre_article
 
 
 def afficher(contenu, date_publication, erreur, titre, titre_article):
