@@ -56,18 +56,23 @@ def modifier_article(identifiant):
             db = Database.get_db()
             article = db.get_article_by_id(identifiant)
             if article:
+                ancien_titre = article[
+                    1]  # Récupérer l'ancien titre de l'article
                 if nouveau_titre:
-                    # Vérifier si le nouveau titre existe déjà
-                    if db.article_exists(nouveau_titre):
-                        erreur = ("Un article avec le même titre existe déjà. "
-                                  "Veuillez entrer un autre titre.")
-                        return redirect(
-                            url_for('article', identifiant=identifiant,
-                                    erreur=erreur))
-                    else:
-                        # Mettre à jour le titre de l'article
-                        identifiant = db.update_article_titre(identifiant,
-                                                              nouveau_titre)
+                    # Vérifier si le nouveau titre est différent de l'ancien
+                    if nouveau_titre != ancien_titre:
+                        # Vérifier si le nouveau titre existe déjà
+                        if db.article_exists(nouveau_titre):
+                            erreur = (
+                                "Un article avec le même titre existe déjà. "
+                                "Veuillez entrer un autre titre.")
+                            return redirect(
+                                url_for('article', identifiant=identifiant,
+                                        erreur=erreur))
+                        else:
+                            # Mettre à jour le titre de l'article
+                            identifiant = db.update_article_titre(identifiant,
+                                                                  nouveau_titre)
 
                 if nouveau_contenu:
                     db.update_article_contenu(identifiant, nouveau_contenu)
@@ -89,8 +94,7 @@ def creation_article():
                                contenu="", erreur="")
     else:
         erreur = None
-        contenu, date_publication, titre_article = obtenir_infos_articles(
-            date_publication)
+        contenu, date_publication, titre_article = obtenir_infos_articles()
         erreur = est_invalide(contenu, date_publication, erreur, titre_article)
 
         if erreur is not None:
@@ -103,15 +107,25 @@ def creation_article():
         # Vérifier si l'id_article est déjà utilisé
         if db.article_exists(titre_article):
             return existe_deja(contenu, date_publication, titre, titre_article)
-        # Creer l'article dans la base de données
+
+        # Créer l'article dans la base de données
         article = db.create_article(titre_article, date_publication, contenu,
                                     id_utilisateur)
+
+        # Vérifier à nouveau la validité des champs après la création de l'article
+        erreur = est_invalide(contenu, date_publication, erreur, titre_article)
+
+        if erreur is not None:
+            return afficher(contenu, date_publication, erreur, titre,
+                            titre_article)
+
+        # Si les champs sont valides après la création de l'article, rediriger vers la confirmation
         return redirect(
             url_for('confirmation_article', titre_article=titre_article,
                     article=article))
 
 
-def obtenir_infos_articles(date_publication):
+def obtenir_infos_articles():
     titre_article = request.form.get('titre_article')
     date_publication = request.form.get('date_publication')
     contenu = request.form.get('contenu')
@@ -144,8 +158,8 @@ def est_invalide(contenu, date_publication, erreur, titre_article):
     if len(titre_article) < 3:
         erreur = "Le titre doit avoir au moins 3 caractères."
     # Vérifier si le champ titre dépasse 100 caractères
-    if len(titre_article) > 100:
-        erreur = "Le titre ne doit pas dépasser 100 caractères."
+    if len(titre_article) > 30:
+        erreur = "Le titre doit avoir moins de 30 caractères."
     # Vérifier si le format de la date est valide
     if not re.match(r'^\d{2}-\d{2}-\d{4}$', date_publication):
         erreur = ("Le format de la date de publication n'est pas valide. "
@@ -154,7 +168,7 @@ def est_invalide(contenu, date_publication, erreur, titre_article):
     if len(contenu) < 15:
         erreur = "Le contenu doit avoir au moins 15 caractères."
     # Vérifier si le contenu a moins de 100 caractères
-    if len(contenu) > 100:
+    if len(contenu) < 100:
         erreur = "Le contenu doit avoir moins de 100 caractères."
     return erreur
 
