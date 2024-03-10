@@ -19,7 +19,7 @@ def recherche():
 @app.route('/resultats/<query>', methods=['GET'])
 @app.route('/resultats/', defaults={'query': None}, methods=['GET'])
 def resultats(query):
-    titre="Résultats"
+    titre = "Résultats"
     if query:
         # Effectuer la recherche en fonction du terme de recherche (query) et
         # récupérer les articles correspondants
