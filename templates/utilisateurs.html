@@ -12,7 +12,7 @@
         <h1 class="display-5 fw-bold text-body-emphasis text-center">Tous les
             utilisateurs</h1>
         <div class="d-grid gap-2 my-3 d-sm-flex justify-content-sm-center">
-            <a href="{{ url_for('inscription') }}"
+            <a href="{{ url_for('creer_utilisateur') }}"
                class="btn btn-primary btn-lg px-4">Créer un utilisateur</a>
         </div>
         {% for batch in utilisateurs|batch(4) %}

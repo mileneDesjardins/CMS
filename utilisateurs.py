@@ -8,19 +8,14 @@ from database import Database
 from app import app
 
 
-@app.route('/creation_utilisateur', methods=['GET', 'POST'])
-def inscription():
+@app.route('/creation-utilisateur', methods=['GET', 'POST'])
+def creer_utilisateur():
     titre = 'Creation utilisateur'
     if request.method == "GET":
         return render_template("creation_utilisateur.html", titre=titre)
     else:
-        prenom = request.form['prenom']
-        nom = request.form['nom']
-        username = request.form["username"]
-        courriel = request.form["courriel"]
-        mdp = request.form["mdp"]
-        photo = request.files["photo"]
-        photo_data = photo.stream.read()
+        courriel, mdp, nom, photo_data, prenom, username = (
+            obtenir_infos_utilisateur())
 
         # Vérifier que les champs ne sont pas vides
         if prenom == "" or nom == "" or courriel == "" or mdp == "" or len(
@@ -37,12 +32,22 @@ def inscription():
         # base de données)
         db = Database.get_db()
         id_photo = db.create_photo(photo_data)
-
         db.create_user(prenom, nom, username, courriel, mdp_hash, mdp_salt,
                        id_photo)
 
         # Redirection vers une page de confirmation
         return redirect('/confirmation_utilisateur', 302)
+
+
+def obtenir_infos_utilisateur():
+    prenom = request.form['prenom']
+    nom = request.form['nom']
+    username = request.form["username"]
+    courriel = request.form["courriel"]
+    mdp = request.form["mdp"]
+    photo = request.files["photo"]
+    photo_data = photo.stream.read()
+    return courriel, mdp, nom, photo_data, prenom, username
 
 
 @app.route('/connexion', methods=['GET', 'POST'])
@@ -52,7 +57,7 @@ def inscription():
 def connexion():
     titre = "Connexion"
     redirection = "/"
-    redirection = determiner_redirection(redirection)
+    redirection = determiner(redirection)
 
     if request.method == "GET":
         return render_template("connexion.html", titre=titre)
@@ -114,7 +119,7 @@ def creer_session(redirection, utilisateur):
     return redirect(redirection, 302)
 
 
-def determiner_redirection(redirection):
+def determiner(redirection):
     if request.path == "/connexion":
         redirection = "/"
     elif request.path == "/connexion-admin":
