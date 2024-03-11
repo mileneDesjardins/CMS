@@ -4,7 +4,7 @@
 
 <h2>Insallation</h2>
 
-1. Assurez-vous d'avoir installer Python sur votre système.
+1. Assurez-vous d'avoir installer Python sur votre système: https://www.python.org/downloads/
 
 2. Installer Flask et pycodestyle à l'aide de pip, le gestionnaire de paquets de Python:
 
