@@ -30,7 +30,7 @@ flask --debug run
 
 ```
 
-5. Entrer l'url suivant:
+5. Entrer l'url suivant dans un fureteur tel que Chrome, Firefox ou Edge:
 http://127.0.0.1:5000
 
 
