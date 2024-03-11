@@ -1,6 +1,6 @@
 <h1>TP1 - INF5190</h1>
 <p>Ce projet consiste en la conception d'un CMS (Content Management System) simplifié pour la gestion de contenu de sites web. 
-  Le CMS permet aux utilisateurs ayant un compte de creer, modifier et supprimer des articles. Il est aussi possible pour eux de créer et désactiver un utilisateur ainsi que modifier les informations de ceux-ci</p>
+  Le CMS permet aux utilisateurs ayant un compte de créer, modifier et supprimer des articles. Il est aussi possible pour eux de créer et désactiver un utilisateur ainsi que modifier les informations de celui-ci</p>
 
 <h2>Insallation</h2>
 
@@ -43,11 +43,11 @@ Le CMS doit supporter plusieurs routes pour différentes fonctionnalités. Voici
 GET /: 
   - Page d'accueil affichant les 5 dernières publications et un champ de recherche.
 
-GET /article/<identifiant> : 
+GET /article/&lt;identifiant&gt; : 
   - Page d'un article spécifique.
 
 GET /admin : 
-  - Point d'entrée pour l'administration du site, nécessitant une authentification.
+  - Point d'entrée pour l'administration du site, elle redirige à une page qui présente la liste de tous les articles, accessible après authentification.
 
 GET /admin-nouveau : 
   - Page de création d'un nouvel article, accessible après authentification.
