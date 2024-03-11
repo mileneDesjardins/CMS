@@ -65,13 +65,12 @@ GET /utilisateurs :
 
   - HTML 5
   - CSS 3
-  - JavaScript (si nécessaire)
-  - JQuery (si nécessaire)
-  - Bootstrap (si nécessaire)
+  - JavaScript
+  - Bootstrap
 
 <h3>Back-end</h3>
 
-  - Python (standard)
-  - Flask (doit être installé)
+  - Python
+  - Flask
 
 
