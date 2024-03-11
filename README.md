@@ -30,6 +30,10 @@ flask --debug run
 
 ```
 
+5. Entrer l'url suivant:
+http://127.0.0.1:5000
+
+
 <h2>Base de données</h2>
 Il y a 3 bases de données existantes:
 
